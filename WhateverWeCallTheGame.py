@@ -21,11 +21,12 @@
 #       MA 02110-1301, USA.
 #       
 #       
-import objects,collisions
+import pygame, objects, levels,os
 pygame.init()
 def main():
     #texture=pygame.image.load("assets/mortHead.png")
-    testobj=objects.Object("assets/mortHead.png")
+    testobj=objects.Object("assets"+os.sep+"mortHead.png")
+    level =levels.Level(1,1)
     screen = pygame.display.set_mode([800,600])
     return 0
 

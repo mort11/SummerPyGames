@@ -25,7 +25,7 @@ import pygame,objects
 pygame.init()
 
 class collisionDisplay(pygame.display):
-    self.colliders=set()
-    
+    def initCollisions(self):
+        self.colliders=set()    
     def addobject(self,object):
         self.colliders.add(object)

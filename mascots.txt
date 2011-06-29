@@ -1,7 +1,7 @@
-Glenda, Plan 9
-Konqi, Katie, Kandalf, KDE
-Beastie, BSD
-Tux, Tuz, Linux
+@Glenda, Plan 9
+@Konqi, Katie, Kandalf, KDE
+@Beastie, BSD
+#Tux, Tuz, Linux
 Wilber, GIMP
 Silme, Drupal
 Python, Python
@@ -9,7 +9,7 @@ ThunderBird, Mozilla Thunderbird
 Geeko, SUSE
 Sheep, Workrave
 Squirrel, SPIP
-Firefox, Firefox
+#Firefox, Firefox
 Hexley, Darwin
 Pig, Snort
 Pidgeon, Pidgin
@@ -21,7 +21,7 @@ Camel, Camelia, Perl
 Belenos, BeleniX
 Kitty, AROS
 Skalia, MySQL
-Puffy, OpenBSD
+@Puffy, OpenBSD
 Larry the Cow, Gentoo Linux
 Giraffe, Nexenta
-Schilli, SchilliX
+@Schilli, SchilliX

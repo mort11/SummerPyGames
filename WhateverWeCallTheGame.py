@@ -21,13 +21,20 @@
 #       MA 02110-1301, USA.
 #       
 #       
-import pygame, objects, levels,os
+import pygame, objects, levels,os,menus
 pygame.init()
+def testfunc():
+    pass
 def main():
     #texture=pygame.image.load("assets/mortHead.png")
     testobj=objects.Object("assets"+os.sep+"mortHead.png")
     level =levels.Level(1,1)
     screen = pygame.display.set_mode([800,600])
+    testmenu=menus.Menu(dict([["test",testfunc],["derp",testfunc]
+    ,["derp2",testfunc],["wololo",testfunc]]))
+    while True:
+        testmenu.draw()
+        pygame.display.flip()
     return 0
 
 if __name__ == '__main__':

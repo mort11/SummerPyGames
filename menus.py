@@ -23,11 +23,7 @@ class Menu:
         screen.fill((0,0,0))
         screencenter=(screen.get_width()/2,screen.get_height()/2)
         setlength=len(self.entryset)
-        if setlength == 1:
-            #draw 1 rectangle on the center of the screen
-            pygame.draw.rect(screen,(255,255,255),(screencenter[0]-256,
-            screencenter[1]+16,512,32))
-        elif setlength > 1:
+        if setlength > 0:
             #dynamic drawing of as many rectangles as needed
             if setlength % 2 == 0:
                 #even number of entries

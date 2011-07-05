@@ -42,9 +42,9 @@ def main():
             if event.key == pygame.K_ESCAPE:
                 running = False
             elif event.key == pygame.K_UP:
-                testmenu.nextEntry()
-            elif event.key == pygame.K_DOWN:
                 testmenu.prevEntry()
+            elif event.key == pygame.K_DOWN:
+                testmenu.nextEntry()
             elif event.key == pygame.K_RETURN:
                 testmenu.activateEntry()
         testmenu.draw()

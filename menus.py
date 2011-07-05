@@ -26,20 +26,24 @@ class Menu:
 
     def addEntry(self, entry):
         self.entrylist.append(entry)
-    def prevEntry(self):
-        iterator=-1
-        for i in self.entrylist:
-            iterator+=1
-            if i == self.selectedentry:
-                break
-        self.selectedentry=self.entrylist[iterator-1]
     def nextEntry(self):
         iterator=-1
         for i in self.entrylist:
             iterator+=1
             if i == self.selectedentry:
                 break
-        self.selectedentry=self.entrylist[iterator+1]
+        print iterator
+        self.selectedentry=self.entrylist[iterator-1]
+    def prevEntry(self):
+        iterator=-1
+        for i in self.entrylist:
+            iterator+=1
+            if i == self.selectedentry:
+                break
+        try:
+            self.selectedentry=self.entrylist[iterator+1]
+        except IndexError:
+            self.selectedentry=self.entrylist[0]
     
     def activateEntry(self):
         self.selectedentry.activate()

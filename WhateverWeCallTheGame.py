@@ -31,7 +31,14 @@ def main():
     level =levels.Level(1,1)
     screen = pygame.display.set_mode([800,600])
     testmenu=menus.Menu(dict([["test",testfunc],["wololo",testfunc]]))
-    while True:
+    running=True
+    while running:
+        event = pygame.event.poll()
+        if event.type == pygame.QUIT:
+            running = False
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                running = False
         testmenu.draw()
         pygame.display.flip()
     return 0

@@ -24,13 +24,15 @@
 import pygame, objects, levels,os,menus
 pygame.init()
 def testfunc():
-    pass
+    print "Called"
 def main():
     #texture=pygame.image.load("assets/mortHead.png")
     testobj=objects.Object("assets"+os.sep+"mortHead.png")
     level =levels.Level(1,1)
     screen = pygame.display.set_mode([800,600])
-    testmenu=menus.Menu(dict([["test",testfunc],["wololo",testfunc]]))
+    testmenu=menus.Menu(dict([["test",testfunc],["wololo",testfunc],
+    ["derp",testfunc],["heydan",testfunc]]))
+    testmenu.selectEntry(menus.MenuEntry("heydan",testfunc))
     running=True
     while running:
         event = pygame.event.poll()
@@ -39,6 +41,12 @@ def main():
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 running = False
+            elif event.key == pygame.K_UP:
+                testmenu.nextEntry()
+            elif event.key == pygame.K_DOWN:
+                testmenu.prevEntry()
+            elif event.key == pygame.K_RETURN:
+                testmenu.activateEntry()
         testmenu.draw()
         pygame.display.flip()
     return 0

@@ -30,7 +30,7 @@ def main():
     testobj=objects.Object("assets"+os.sep+"mortHead.png")
     level =levels.Level(1,1)
     screen = pygame.display.set_mode([800,600])
-    testmenu=menus.Menu(dict([["test",testfunc]]))
+    testmenu=menus.Menu(dict([["test",testfunc],["wololo",testfunc]]))
     while True:
         testmenu.draw()
         pygame.display.flip()

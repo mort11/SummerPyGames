@@ -11,7 +11,7 @@ class Level:
             self.levelFromNumber(worldnum,levelnum)
         else:
             self.levelFromFile(datafile)
-
+    
     def levelFromFile(self,datafile):
         #stub implementation of level loading
         print "Loading: "+datafile
@@ -20,4 +20,10 @@ class Level:
         self.levelFromFile("levels"+os.sep+"world"+str(worldnum)
         +os.sep+"level"+str(levelnum))
 
-#class LevelMenu:
+    def startLevel(self):
+        # draw the level, let the player do their thing
+        pass
+
+class LevelMenu(menus.Menu):
+    def __init__(self):
+        menus.Menu.__init__(dict)

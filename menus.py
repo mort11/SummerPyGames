@@ -5,6 +5,7 @@ Provides the Menu,MenuEntry, MainMenu and OptionsMenu classes
 import pygame
 pygame.init()
 screen=pygame.display.get_surface()
+menufont = pygame.font.SysFont("droidsans",20)
 # entries is a dict, with the string that will be the button text 
 # used as the key for the bound method object
 class Menu:
@@ -18,7 +19,6 @@ class Menu:
     def addEntry(self, entry):
         self.entryset.add(entry)
     def draw(self):
-        
         screen = pygame.display.get_surface()
         screen.fill((0,0,0))
         screencenter=(screen.get_width()/2,screen.get_height()/2)
@@ -31,6 +31,10 @@ class Menu:
                 for i in self.entryset:
                     pygame.draw.rect(screen,(255,255,255),(screencenter[0]-256,
                     height,512,32))
+                    displaysize=menufont.size(i.text)
+                    renderedfont=menufont.render(i.text,True,(0,0,0))
+                    screen.blit(renderedfont,(screencenter[0]-displaysize[0]/2,height+4))
+                    print displaysize
                     height-=64
             else:
                 #odd number of entries

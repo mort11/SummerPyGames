@@ -15,6 +15,7 @@ class Options:
     sfxVolume=1
 
 class GlobalObjects:
+    bigLock=threading.RLock()
     lock=threading.RLock()
     event=pygame.event.poll()
     renderingThread=None

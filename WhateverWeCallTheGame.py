@@ -30,9 +30,12 @@ def main():
     testthread.renderobj=options
     testthread.start()
     while True:
+        GlobalObjects.bigLock.acquire()
+        GlobalObjects.bigLock.release()
         GlobalObjects.lock.acquire()
         event = GlobalObjects.event
-        if (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE) or event.type == pygame.QUIT:
+        if ((event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE) 
+        or event.type == pygame.QUIT) and not GlobalObjects.escInUse:
             GlobalObjects.lock.release()
             break
         GlobalObjects.lock.release()

@@ -20,3 +20,10 @@ class GlobalObjects:
     event=pygame.event.poll()
     renderingThread=None
     escInUse=False
+
+class Renderable:
+    def __init__(self):
+        self.lock=threading.RLock()
+    
+    def draw(self,event):
+        print "Please implement a draw method"

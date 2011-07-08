@@ -4,17 +4,17 @@ Provides the Menu,MenuEntry, MainMenu and OptionsMenu classes
 '''
 import pygame,threading
 pygame.init()
-
+from globalvalues import Options,Renderable
 menufont = pygame.font.SysFont("droidsans",20)
 
-class Menu:
+class Menu(Renderable):
     
     def __init__(self,entries,initialentry=None):
-        self.lock=threading.RLock()
+        Renderable.__init__(self)
         self.selectedentry=initialentry
         self.entrylist=list()
         for i in entries:
-            if self.selectedentry==None:
+            if not self.selectedentry:
                 self.selectedentry=i
                 self.addEntry(self.selectedentry)
                 continue
@@ -37,6 +37,11 @@ class Menu:
             iterator+=1
             if i == self.selectedentry:
                 break
+        Options.lock.acquire()
+        if not Options.menuWrap and iterator == 0:
+            Options.lock.release()
+            return
+        Options.lock.release()
         self.selectedentry=self.entrylist[iterator-1]
 
     def prevEntry(self):
@@ -45,6 +50,11 @@ class Menu:
             iterator+=1
             if i == self.selectedentry:
                 break
+        Options.lock.acquire()
+        if not Options.menuWrap and iterator == len(self.entrylist)-1:
+            Options.lock.release()
+            return
+        Options.lock.release()
         try:
             self.selectedentry=self.entrylist[iterator+1]
         except IndexError:
@@ -129,8 +139,6 @@ class MenuEntry:
         if self.lock:
             self.lock.release()
 
-from globalvalues import Options
-
 class OptionsMenu(Menu):
     
     def getVisibleFPS():
@@ -194,11 +202,12 @@ class OptionsMenu(Menu):
     Options.lock),
     MenuEntry("Backgrounds: ",toggleBackgrounds,(getBackgrounds,"On","Off"),
     Options.lock),
-    MenuEntry("Limit Framerate: ",toggleLimitFramerate,(getFramerateLimit,"On","Off"),
-    Options.lock),
+    MenuEntry("Limit Framerate: ",toggleLimitFramerate,(getFramerateLimit,"On",
+    "Off"),Options.lock),
     MenuEntry("Show Framerate: ",toggleShowFPS,(getVisibleFPS,"On","Off"),
     Options.lock)
     )
     
     def __init__(self):
         Menu.__init__(self,OptionsMenu.optionsentries)
+

@@ -21,25 +21,40 @@
 #       MA 02110-1301, USA.
 #       
 #       
-import pygame, objects, levels,menus,renderthread
-from globalvalues import GlobalObjects
+import pygame, objects, levels,menus,threads
+from globalvalues import GlobalObjects,Events
 pygame.init()
 def main():
     options=menus.OptionsMenu()
-    testthread=renderthread.RenderThread()
-    testthread.renderobj=options
-    testthread.start()
-    while True:
-        GlobalObjects.bigLock.acquire()
-        GlobalObjects.bigLock.release()
-        GlobalObjects.lock.acquire()
-        event = GlobalObjects.event
-        if ((event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE) 
-        or event.type == pygame.QUIT) and not GlobalObjects.escInUse:
-            GlobalObjects.lock.release()
-            break
-        GlobalObjects.lock.release()
-    testthread.running=False
+    render=threads.RenderThread()
+    render.renderobj=options
+    render.start()
+    event=threads.EventThread()
+    event.start()
+    running = True
+    while running:
+        with Events.trigger:
+            for event in Events.events:
+                if event.type == pygame.QUIT:
+                    running = False
+                    break
+                elif event.type == pygame.KEYDOWN:
+                    with GlobalObjects.lock:
+                        if GlobalObjects.escInUse:
+                            GlobalObjects.lock.release()
+                            break
+                    if event.key == pygame.K_ESCAPE:
+                        running = False
+                        break
+        with Events.trigger,Events.done:
+            Events.trigger.wait()
+    def cleanup():
+        render.killed.set()
+        event.killed.set()
+        print "waiting on render to exit"
+        render.join()
+        event.join()
+    cleanup()
     return 0
 
 if __name__ == '__main__':

@@ -63,17 +63,18 @@ class Menu(Renderable):
     def activateEntry(self):
         self.selectedentry.activate()
 
-    def update(self,event):
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_DOWN:
-                self.nextEntry()
-            elif event.key == pygame.K_UP:
-                self.prevEntry()
-            elif event.key == pygame.K_RETURN:
-                self.activateEntry()
+    def update(self,events):
+        for event in events:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_DOWN:
+                    self.nextEntry()
+                elif event.key == pygame.K_UP:
+                    self.prevEntry()
+                elif event.key == pygame.K_RETURN:
+                    self.activateEntry()
 
-    def draw(self,event):
-        self.update(event)
+    def draw(self,events):
+        self.update(events)
         screen = pygame.display.get_surface()
         screen.fill((0,0,0))
         screencenter=(screen.get_width()/2,screen.get_height()/2)
@@ -111,21 +112,20 @@ class MenuEntry:
     def __init__(self, title, method,dynamic=(None,None,None),lock=None):
         self.text=title
         self.boundmethod=method
-        print dynamic[0]
         self.dynamicmethod = dynamic[0]
         self.iftrue = dynamic[1]
         self.iffalse = dynamic[2]
-        self.lock=lock
+        if lock:
+            self.lock = threading.Lock()
+        else:
+            self.lock=lock
 
     def getText(self):
-        if self.lock:
-            self.lock.acquire()
-        if self.dynamicmethod():
-            return self.text+str(self.iftrue)
-        else:
-            return self.text+str(self.iffalse)
-        if self.lock:
-            self.lock.release()
+        with self.lock:
+            if self.dynamicmethod():
+                return self.text+str(self.iftrue)
+            else:
+                return self.text+str(self.iffalse)
 
     def compare(self,other):
         return self.text == other.text and self.boundmethod==other.boundmethod \
@@ -133,11 +133,8 @@ class MenuEntry:
          and self.iffalse == other.iffalse
 
     def activate(self):
-        if self.lock:
-            self.lock.acquire()
-        self.boundmethod()
-        if self.lock:
-            self.lock.release()
+        with self.lock:
+            self.boundmethod()
 
 class OptionsMenu(Menu):
     

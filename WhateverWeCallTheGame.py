@@ -33,8 +33,6 @@ def main():
     eventthread.start()
     def cleanup():
         render.killed.set()
-        with Events.trigger,Events.done:
-            Events.trigger.wait()
         render.join()
         eventthread.killed.set()
         eventthread.join()

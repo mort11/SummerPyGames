@@ -12,13 +12,11 @@ class EventThread(threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self,name="EventThread")
         self.killed = threading.Event()
-        print self.killed
         with GlobalObjects.lock:
             GlobalObjects.eventsThread=self
     
     def run(self):
-        with GlobalObjects.lock,Options.lock:
-            GlobalObjects.clock.tick(Options.limitFramerate)
+        GlobalObjects.clock.tick(Options.limitFramerate)
         while not self.killed.isSet():
             if Events.done.acquire(False):
                 Events.done.release()
@@ -26,8 +24,9 @@ class EventThread(threading.Thread):
             with Events.trigger:
                 Events.events = pygame.event.get()
                 Events.trigger.notifyAll()
-            with Options.lock,GlobalObjects.lock:
-                GlobalObjects.clock.tick(Options.limitFramerate)
+            GlobalObjects.clock.tick(Options.limitFramerate)
+
+
 
 class RenderThread(threading.Thread):
     def __init__(self):
@@ -39,17 +38,23 @@ class RenderThread(threading.Thread):
             GlobalObjects.renderingThread=self
     
     def run(self):
+        if self.renderobj:
+            with self.renderobj.lock:
+                self.renderobj.draw(Events.events)
+        if Options.showFramerate:
+            framerate = GlobalObjects.clock.get_fps()
+            self.screen.blit(frameratefont.render(str(framerate),False,
+            (255,0,0)),(0,0))
+        pygame.display.flip()
         while not self.killed.isSet():
-            if self.renderobj:
-                with self.renderobj.lock, Events.trigger:
-                    self.renderobj.draw(Events.events)
-            with Options.lock:
-                if Options.showFramerate:
-                    with GlobalObjects.lock:
-                        framerate=GlobalObjects.clock.get_fps()
-                        self.screen.blit(frameratefont.render(str(framerate),False,
-                        (255,0,0)),(0,0))
-            pygame.display.flip()
-            with Events.trigger,Events.done:
+            with Events.done, Events.trigger:
                 Events.trigger.wait()
+            if self.renderobj:
+                with self.renderobj.lock:
+                    self.renderobj.draw(Events.events)
+            if Options.showFramerate:
+                framerate = GlobalObjects.clock.get_fps()
+                self.screen.blit(frameratefont.render(str(framerate),False,
+                (255,0,0)),(0,0))
+            pygame.display.flip()
     

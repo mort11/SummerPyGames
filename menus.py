@@ -139,60 +139,35 @@ class MenuEntry:
 class OptionsMenu(Menu):
     
     def getVisibleFPS():
-        Options.lock.acquire()
-        fps=Options.showFramerate
-        Options.lock.release()
-        return fps
+        return Options.showFramerate
     
     def toggleShowFPS():
-        Options.lock.acquire()
-        if Options.showFramerate:
-            Options.showFramerate=False
-        else:
-            Options.showFramerate=True
-        Options.lock.release()
+        with Options.lock:
+            Options.showFramerate = not Options.showFramerate
 
     def getFramerateLimit():
-        Options.lock.acquire()
-        limit=Options.limitFramerate
-        Options.lock.release()
-        return limit
+        return Options.limitFramerate
     
     def toggleLimitFramerate():
-        Options.lock.acquire()
-        if Options.limitFramerate == 60:
-            Options.limitFramerate = 0
-        else:
-            Options.limitFramerate = 60
-        Options.lock.release()
+        with Options.lock:
+            if Options.limitFramerate == 60:
+                Options.limitFramerate = 0
+            else:
+                Options.limitFramerate = 60
 
     def getBackgrounds():
-        Options.lock.acquire()
-        backgrounds=Options.backgrounds
-        Options.lock.release()
-        return backgrounds
+        return Options.backgrounds
     
     def toggleBackgrounds():
-        Options.lock.acquire()
-        if Options.backgrounds:
-            Options.backgrounds=False
-        else:
-            Options.backgrounds=True
-        Options.lock.release()
+        with Options.lock:
+            Options.backgrounds= not Options.backgrounds
 
     def getMenuWrap():
-        Options.lock.acquire()
-        wrap=Options.menuWrap
-        Options.lock.release()
-        return wrap
+        return Options.menuWrap
     
     def toggleMenuWrap():
-        Options.lock.acquire()
-        if Options.menuWrap:
-            Options.menuWrap=False
-        else:
-            Options.menuWrap=True
-        Options.lock.release()
+        with Options.lock:
+            Options.menuWrap = not Options.menuWrap
 
     optionsentries = (
     MenuEntry("Menu Wrapping: ",toggleMenuWrap,(getMenuWrap,"On","Off"),

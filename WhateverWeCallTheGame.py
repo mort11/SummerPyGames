@@ -29,8 +29,15 @@ def main():
     render=threads.RenderThread()
     render.renderobj=options
     render.start()
-    event=threads.EventThread()
-    event.start()
+    eventthread=threads.EventThread()
+    eventthread.start()
+    def cleanup():
+        render.killed.set()
+        with Events.trigger,Events.done:
+            Events.trigger.wait()
+        render.join()
+        eventthread.killed.set()
+        eventthread.join()
     running = True
     while running:
         with Events.trigger:
@@ -48,12 +55,6 @@ def main():
                         break
         with Events.trigger,Events.done:
             Events.trigger.wait()
-    def cleanup():
-        render.killed.set()
-        event.killed.set()
-        print "waiting on render to exit"
-        render.join()
-        event.join()
     cleanup()
     return 0
 

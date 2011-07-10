@@ -15,12 +15,10 @@ class Object:
     def __init__(self, texture,masktexture=None,pivotpixel=None, ifcollides=True):
         self.surface = pygame.image.load(texture)
         # using a mask texture lets artists use more of their alpha channels
-        
         if masktexture == None:
             self.mask=autogenmask(texture)
         else:
             self.mask=masktexture
-
         self.collides=ifcollides
         self.pivot=pivotpixel
         self.velocity=[0,0]

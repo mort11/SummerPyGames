@@ -21,20 +21,41 @@
 #       MA 02110-1301, USA.
 #       
 #       
-import pygame, objects, levels,os,menus
+import pygame, objects, levels,menus,threads
+from globalvalues import GlobalObjects,Events
 pygame.init()
-def testfunc():
-    pass
 def main():
-    #texture=pygame.image.load("assets/mortHead.png")
-    testobj=objects.Object("assets"+os.sep+"mortHead.png")
-    level =levels.Level(1,1)
-    screen = pygame.display.set_mode([800,600])
-    testmenu=menus.Menu(dict([["test",testfunc],["derp",testfunc]
-    ,["derp2",testfunc],["wololo",testfunc]]))
-    while True:
-        testmenu.draw()
-        pygame.display.flip()
+    options=menus.OptionsMenu()
+    render=threads.RenderThread()
+    render.renderobj=options
+    render.start()
+    eventthread=threads.EventThread()
+    eventthread.start()
+    def cleanup():
+        render.killed.set()
+        with Events.trigger,Events.done:
+            Events.trigger.wait()
+        render.join()
+        eventthread.killed.set()
+        eventthread.join()
+    running = True
+    while running:
+        with Events.trigger:
+            for event in Events.events:
+                if event.type == pygame.QUIT:
+                    running = False
+                    break
+                elif event.type == pygame.KEYDOWN:
+                    with GlobalObjects.lock:
+                        if GlobalObjects.escInUse:
+                            GlobalObjects.lock.release()
+                            break
+                    if event.key == pygame.K_ESCAPE:
+                        running = False
+                        break
+        with Events.trigger,Events.done:
+            Events.trigger.wait()
+    cleanup()
     return 0
 
 if __name__ == '__main__':

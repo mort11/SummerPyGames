@@ -5,7 +5,7 @@ the EventThread class, which sends events to the other threads
 '''
 import threading,pygame
 pygame.init()
-from globalvalues import GlobalObjects,Options,Events
+from globalvalues import GlobalObjects,Options,Events, Menus
 frameratefont=pygame.font.SysFont("consolas",16)
 
 class EventThread(threading.Thread):
@@ -31,7 +31,7 @@ class EventThread(threading.Thread):
 class RenderThread(threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self, name="RenderThread")
-        self.renderobj=None
+        self.renderobj=Menus.main
         self.killed=threading.Event()
         self.screen=pygame.display.set_mode((800,600))
         with GlobalObjects.lock:

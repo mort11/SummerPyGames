@@ -4,11 +4,13 @@ Provides the Menu,MenuEntry, MainMenu and OptionsMenu classes
 '''
 import pygame,threading
 pygame.init()
-from globalvalues import Options,Renderable
+from globalvalues import Options,Renderable,Menus,GlobalObjects
 menufont = pygame.font.SysFont("droidsans",20)
+def init():
+    Menus.main = MainMenu()
+    Menus.options = OptionsMenu()
 
 class Menu(Renderable):
-    
     def __init__(self,entries,initialentry=None):
         Renderable.__init__(self)
         self.selectedentry=initialentry
@@ -109,23 +111,20 @@ that will be appended to the static text if present
 '''
 
 class MenuEntry:
-    def __init__(self, title, method,dynamic=(None,None,None),lock=None):
+    def __init__(self, title, method,dynamic=(None,None,None)):
         self.text=title
         self.boundmethod=method
         self.dynamicmethod = dynamic[0]
         self.iftrue = dynamic[1]
         self.iffalse = dynamic[2]
-        if lock:
-            self.lock = threading.Lock()
-        else:
-            self.lock=lock
 
     def getText(self):
-        with self.lock:
-            if self.dynamicmethod():
-                return self.text+str(self.iftrue)
-            else:
-                return self.text+str(self.iffalse)
+        if not self.dynamicmethod:
+            return self.text
+        if self.dynamicmethod():
+            return self.text+str(self.iftrue)
+        else:
+            return self.text+str(self.iffalse)
 
     def compare(self,other):
         return self.text == other.text and self.boundmethod==other.boundmethod \
@@ -133,8 +132,7 @@ class MenuEntry:
          and self.iffalse == other.iffalse
 
     def activate(self):
-        with self.lock:
-            self.boundmethod()
+        self.boundmethod()
 
 class OptionsMenu(Menu):
     
@@ -169,17 +167,44 @@ class OptionsMenu(Menu):
         with Options.lock:
             Options.menuWrap = not Options.menuWrap
 
+    def returnToMain(self=None):
+        with GlobalObjects.lock:
+            GlobalObjects.escInUse = False
+            GlobalObjects.renderingThread.renderobj = Menus.main
+
+
     optionsentries = (
-    MenuEntry("Menu Wrapping: ",toggleMenuWrap,(getMenuWrap,"On","Off"),
-    Options.lock),
-    MenuEntry("Backgrounds: ",toggleBackgrounds,(getBackgrounds,"On","Off"),
-    Options.lock),
+    MenuEntry("Menu Wrapping: ",toggleMenuWrap,(getMenuWrap,"On","Off")),
+    MenuEntry("Backgrounds: ",toggleBackgrounds,(getBackgrounds,"On","Off")),
     MenuEntry("Limit Framerate: ",toggleLimitFramerate,(getFramerateLimit,"On",
-    "Off"),Options.lock),
-    MenuEntry("Show Framerate: ",toggleShowFPS,(getVisibleFPS,"On","Off"),
-    Options.lock)
+    "Off")),
+    MenuEntry("Show Framerate: ",toggleShowFPS,(getVisibleFPS,"On","Off")),
+    MenuEntry("Back",returnToMain)
     )
     
     def __init__(self):
         Menu.__init__(self,OptionsMenu.optionsentries)
+    
+    def draw(self,events):
+        Menu.draw(self,events)
+        for event in events:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    self.returnToMain()
 
+class MainMenu(Menu):
+    
+    def switchToLevels():
+        print "stub level menu"
+    
+    def switchToOptions():
+        GlobalObjects.escInUse = True
+        GlobalObjects.renderingThread.renderobj=Menus.options
+
+    mainentries = (
+    MenuEntry("Levels",switchToLevels),
+    MenuEntry("Options",switchToOptions)
+    )
+
+    def __init__(self):
+        Menu.__init__(self,MainMenu.mainentries)

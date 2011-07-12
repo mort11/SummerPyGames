@@ -195,7 +195,8 @@ class OptionsMenu(Menu):
 class MainMenu(Menu):
     
     def switchToLevels():
-        print "stub level menu"
+        GlobalObjects.escInUse = True
+        GlobalObjects.renderingThread.renderobj=Menus.levels
     
     def switchToOptions():
         GlobalObjects.escInUse = True

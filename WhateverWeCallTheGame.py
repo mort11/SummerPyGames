@@ -21,11 +21,12 @@
 #       MA 02110-1301, USA.
 #       
 #       
-import pygame,threads,menus
+import pygame,threads,menus,levels
 from globalvalues import GlobalObjects,Events
 pygame.init()
 def main():
     menus.init()
+    levels.init()
     render=threads.RenderThread()
     render.start()
     eventthread=threads.EventThread()

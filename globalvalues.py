@@ -30,6 +30,7 @@ class Events:
     trigger = threading.Condition()
     
 class GlobalObjects:
+    unlockedWorlds=1
     lock = threading.RLock()
     clock = pygame.time.Clock()
     renderingThread = None
@@ -39,3 +40,5 @@ class GlobalObjects:
 class Menus:
     main = None
     options = None
+    levels = None
+

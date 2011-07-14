@@ -9,6 +9,7 @@ pygame.init()
 class Renderable:
     def __init__(self):
         self.lock=threading.RLock()
+        self.screen = pygame.display.get_surface()
     
     def draw(self,events):
         print "Please implement a draw method"

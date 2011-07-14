@@ -77,9 +77,8 @@ class Menu(Renderable):
 
     def draw(self,events):
         self.update(events)
-        screen = pygame.display.get_surface()
-        screen.fill((0,0,0))
-        screencenter=(screen.get_width()/2,screen.get_height()/2)
+        self.screen.fill((0,0,0))
+        screencenter=(self.screen.get_width()/2,self.screen.get_height()/2)
         setlength=len(self.entrylist)
         if setlength > 0:
             #dynamic drawing of as many rectangles as needed
@@ -89,14 +88,13 @@ class Menu(Renderable):
                 height-=16
             for i in self.entrylist:
                 if i == self.selectedentry:
-                    pygame.draw.rect(screen,(20,255,20),
+                    pygame.draw.rect(self.screen,(20,255,20),
                     (screencenter[0]-258,height-2,516,36))
-                pygame.draw.rect(screen,(255,255,255),(screencenter[0]-256,
+                pygame.draw.rect(self.screen,(255,255,255),(screencenter[0]-256,
                 height,512,32))
-                text=i.getText()
-                displaysize=menufont.size(text)
-                renderedfont=menufont.render(text,True,(0,0,0))
-                screen.blit(renderedfont,(screencenter[0]-displaysize[0]/2,
+                displaysize=menufont.size(i.getText())
+                renderedfont=menufont.render(i.getText(),True,(0,0,0))
+                self.screen.blit(renderedfont,(screencenter[0]-displaysize[0]/2,
                 height+4))
                 height-=64
 

@@ -33,7 +33,7 @@ class RenderThread(threading.Thread):
         threading.Thread.__init__(self, name="RenderThread")
         self.renderobj=Menus.main
         self.killed=threading.Event()
-        self.screen=pygame.display.set_mode((800,600))
+        self.screen=pygame.display.get_surface()
         with GlobalObjects.lock:
             GlobalObjects.renderingThread=self
     

@@ -26,8 +26,6 @@ pygame.display.set_mode((800,600))
 from globalvalues import GlobalObjects,Events
 pygame.init()
 def main():
-    menus.init()
-    levels.init()
     render=threads.RenderThread()
     render.start()
     eventthread=threads.EventThread()
@@ -39,13 +37,12 @@ def main():
         eventthread.join()
     running = True
     while running:
-        with Events.trigger:
-            for event in Events.events:
-                if event.type == pygame.QUIT:
+        for event in Events.events:
+            if event.type == pygame.QUIT:
+                running = False
+            elif event.type == pygame.KEYDOWN:
+                if not GlobalObjects.escInUse and event.key == pygame.K_ESCAPE:
                     running = False
-                elif event.type == pygame.KEYDOWN:
-                    if not GlobalObjects.escInUse and event.key == pygame.K_ESCAPE:
-                        running = False
         with Events.trigger,Events.done:
             Events.trigger.wait()
     cleanup()

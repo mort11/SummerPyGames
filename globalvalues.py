@@ -31,6 +31,7 @@ class Events:
     trigger = threading.Condition()
     
 class GlobalObjects:
+    playercharacters = None
     unlockedWorlds=1
     lock = threading.RLock()
     clock = pygame.time.Clock()

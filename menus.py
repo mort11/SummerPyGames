@@ -6,9 +6,7 @@ import pygame,threading
 pygame.init()
 from globalvalues import Options,Renderable,Menus,GlobalObjects
 menufont = pygame.font.SysFont("droidsans",20)
-def init():
-    Menus.main = MainMenu()
-    Menus.options = OptionsMenu()
+
 
 class Menu(Renderable):
     def __init__(self,entries,initialentry=None):
@@ -207,3 +205,7 @@ class MainMenu(Menu):
 
     def __init__(self):
         Menu.__init__(self,MainMenu.mainentries)
+
+
+Menus.main = MainMenu()
+Menus.options = OptionsMenu()

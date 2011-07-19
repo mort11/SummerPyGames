@@ -4,21 +4,12 @@ Provides an abstraction layer over pygames Surfaces, and in addition to
 rectangles, provides other polygons with collision 
 '''
 import pygame,math
+from globalvalues import GlobalObjects
 pygame.init()
-defaultcolor=(0,0,0,0)
-defaultthreshold=(1,1,1,1)
-def autogenmask(texture,color=defaultcolor,threshold=defaultthreshold):    
-    texturesurface=pygame.image.load(texture)
-    return pygame.mask.from_threshold(texturesurface,color,threshold)
-
 class Object:
-    def __init__(self, texture,masktexture=None,pivotpixel=None, ifcollides=True):
+    def __init__(self, texture, ifcollides=True):
         self.surface = pygame.image.load(texture)
         # using a mask texture lets artists use more of their alpha channels
-        if masktexture:
-            self.mask=autogenmask(masktexture)
-        else:
-            self.mask=autogenmask(texture)
         self.collides=ifcollides
         self.pivot=pivotpixel
         self.velocity=(0,0)
@@ -28,7 +19,16 @@ class Object:
     
     def drawOn(self,surface,at=(0,0)):
         surface.blit(self.surface,at)
+    
+    def collidesWith(self,otherobject):
+        if self.collides:
+            from pygame import mask
+            mask.from_threshold(self.surface,(0,0,0,0),(1,1,1,1))
 
-class Block(Object):
-    def __init__(self):
-        Object.__init__(self,"assets"+os.sep+"block.png",(16,16))
+Glenda=Object('assets'+os.sep+'characters'+os.sep+'Glenda.png')
+Konqi=Object('assets'+os.sep+'characters'+os.sep+'Konqi.png')
+Beastie=Object('assets'+os.sep+'characters'+os.sep+'Beastie.png')
+Schilli=Object('assets'+os.sep+'characters'+os.sep+'Schilli.png')
+GlobalObjects.playercharacters = {Glenda:1,Konqi:2,Beastie:3,Schilli:4}
+
+

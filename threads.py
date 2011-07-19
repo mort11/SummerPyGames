@@ -57,4 +57,9 @@ class RenderThread(threading.Thread):
                 self.screen.blit(frameratefont.render(str(framerate),False,
                 (255,0,0)),(0,0))
             pygame.display.flip()
+
+
+
+class IOThread(threading.Thread):
+    
     

@@ -3,19 +3,20 @@ levels.py
 Provides the Level and LevelMenu classes
 '''
 import pygame,os
+from run_game import Game
 from objects import Object
 from menus import Menu, MenuEntry
 from globalvalues import Renderable,Options,Menus,GlobalObjects
 pygame.init()
-def init():
-    Menus.levels=LevelMenu()
 class Level(Renderable):
     def __init__(self,worldnum,stagenum,datafile=None):
         Renderable.__init__(self)
         self.world=worldnum
         self.stage=stagenum
         self.time=-2000
-        self.background = "assets"+os.sep+"backgrounds"+os.sep+"world"+str(worldnum)+".png"
+        self.size = (0,0)
+        self.background = pygame.image.load("assets"+os.sep+"backgrounds"
+        +os.sep+"world"+str(worldnum)+".png")
         if datafile:
             self.levelFromFile(datafile)
         else:
@@ -27,6 +28,7 @@ class Level(Renderable):
     def levelFromFile(self,datafile):
         #stub implementation of level loading
         print "Loading: "+datafile
+        self.objectdict=None
     
     def levelFromNumber(self,worldnum,stagenum):
         self.levelFromFile("levels"+os.sep+"world"+str(worldnum)
@@ -53,8 +55,9 @@ class Level(Renderable):
         self.processEvents(events)
         if self.time < 0:
             self.startLevel()
-        else:    
-            self.complete()
+        else:
+            GlobalObjects.renderingThread.renderobj=Game(self)
+        
 
     def complete(self):
         if self.stage < 4:
@@ -66,25 +69,17 @@ class Level(Renderable):
 
 class LevelMenu(Menu):
 
-    def updateMenu(self):
-        Menus.levels=LevelMenu()
-        GlobalObjects.renderingThread.renderobj=Menus.levels
-
     def goToWorld1():
         GlobalObjects.renderingThread.renderobj = Level(1,1)
-        # just until I have an actual level to play
 
     def goToWorld2():
         GlobalObjects.renderingThread.renderobj = Level(2,1)
-        # just until I have an actual level to play
 
     def goToWorld3():
         GlobalObjects.renderingThread.renderobj = Level(3,1)
-        # just until I have an actual level to play
 
     def goToWorld4():
         GlobalObjects.renderingThread.renderobj = Level(4,1)
-        # just until I have an actual level to play
 
     def returnToMain(self=None):
         GlobalObjects.escInUse = False
@@ -107,4 +102,6 @@ class LevelMenu(Menu):
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     self.returnToMain()
+
+Menus.levels=LevelMenu()
 

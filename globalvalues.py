@@ -44,3 +44,9 @@ class Menus:
     options = None
     levels = None
 
+class inputmasks:
+    left = 1
+    right = 2
+    up = 4
+    down = 8
+

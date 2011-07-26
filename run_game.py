@@ -16,10 +16,11 @@ class Game(Renderable):
         self.size = level.size
         self.keyinput = 0 
         self.tile_bkd()
-        self.select_player
+        self.select_player()
         if self.objectdict:
             for i in self.objectdict.iterkeys():
                 self.objectdict[i].draw_on(self.screen,i)
+        self.player.draw_on(self.screen,level.playerstart)
 
     def select_player(self):
         self.player = GlobalObjects.playercharacters[self.world]
@@ -40,7 +41,7 @@ class Game(Renderable):
         keydowns=0
         #if KEYDOWN : KEYDOWN
         #if KEYUP : KEYUP
-        #if KEYUP+KEYDOWN : KEYDOWN + CHECK NEXT FRAME
+        #if KEYUP+KEYDOWN : KEYDOWN FOR 1 FRAME
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP:
@@ -72,3 +73,16 @@ class Game(Renderable):
     def draw(self, events):
         input=self.process_events(events)
         
+        #Gotta deal with the 2-keys pressed scenario
+        if input & InputMasks.up == InputMasks.up:
+            #accelerate the character up? Check inventory?
+            pass
+        if input & InputMasks.left == InputMasks.left:
+            #accelerate left
+            pass
+        if input & InputMasks.down == InputMasks.down:
+            #crouch?
+            pass
+        if input & InputMasks.right == InputMasks.right:
+            #accelerate right
+            pass

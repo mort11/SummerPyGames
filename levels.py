@@ -15,6 +15,7 @@ class Level(Renderable):
         self.stage=stagenum
         self.time=-2000
         self.size = (0,0)
+        self.playerstart = (0,0)
         self.background = pygame.image.load("assets"+os.sep+"backgrounds"
         +os.sep+"world"+str(worldnum)+".png")
         if datafile:

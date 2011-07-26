@@ -10,6 +10,8 @@ class Renderable:
     def __init__(self):
         self.lock=threading.RLock()
         self.screen = pygame.display.get_surface()
+        if not self.screen:
+            self.screen = pygame.display.set_mode((800,600))
     
     def draw(self,events):
         print "Please implement a draw method"
@@ -44,7 +46,7 @@ class Menus:
     options = None
     levels = None
 
-class inputmasks:
+class InputMasks:
     left = 1
     right = 2
     up = 4

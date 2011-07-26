@@ -22,7 +22,6 @@
 #       
 #       
 import pygame,threads,menus,levels
-pygame.display.set_mode((800,600))
 from globalvalues import GlobalObjects,Events
 pygame.init()
 def main():

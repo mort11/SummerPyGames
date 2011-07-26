@@ -18,29 +18,29 @@ class Level(Renderable):
         self.background = pygame.image.load("assets"+os.sep+"backgrounds"
         +os.sep+"world"+str(worldnum)+".png")
         if datafile:
-            self.levelFromFile(datafile)
+            self.from_file(datafile)
         else:
-            self.levelFromNumber(worldnum,stagenum)
+            self.from_number(worldnum,stagenum)
 
-    def prettyName(self):
+    def pretty_name(self):
         return 'World '+ str(self.world)+' - Stage '+str(self.stage)
     
-    def levelFromFile(self,datafile):
+    def from_file(self,datafile):
         #stub implementation of level loading
         print "Loading: "+datafile
         self.objectdict=None
     
-    def levelFromNumber(self,worldnum,stagenum):
-        self.levelFromFile("levels"+os.sep+"world"+str(worldnum)
+    def from_number(self,worldnum,stagenum):
+        self.from_file("levels"+os.sep+"world"+str(worldnum)
         +os.sep+"stage"+str(stagenum))
 
-    def startLevel(self):
+    def start(self):
         # draw the level intro
         self.screen.fill((0,0,0))
         levelintro=pygame.font.SysFont('liberationsans',32)
         screencenter=(self.screen.get_width()/2,self.screen.get_height()/2)
-        displaysize=levelintro.size(self.prettyName())
-        renderedtext=levelintro.render(self.prettyName(),True,(255,255,255))
+        displaysize=levelintro.size(self.pretty_name())
+        renderedtext=levelintro.render(self.pretty_name(),True,(255,255,255))
         self.screen.blit(renderedtext,(screencenter[0]-displaysize[0]/2,
         screencenter[1]-displaysize[1]/2))
         self.time+=GlobalObjects.clock.get_time()
@@ -54,7 +54,7 @@ class Level(Renderable):
     def draw(self, events):
         self.processEvents(events)
         if self.time < 0:
-            self.startLevel()
+            self.start()
         else:
             GlobalObjects.renderingThread.renderobj=Game(self)
         
@@ -69,28 +69,28 @@ class Level(Renderable):
 
 class LevelMenu(Menu):
 
-    def goToWorld1():
+    def world_1():
         GlobalObjects.renderingThread.renderobj = Level(1,1)
 
-    def goToWorld2():
+    def world_2():
         GlobalObjects.renderingThread.renderobj = Level(2,1)
 
-    def goToWorld3():
+    def world_3():
         GlobalObjects.renderingThread.renderobj = Level(3,1)
 
-    def goToWorld4():
+    def world_4():
         GlobalObjects.renderingThread.renderobj = Level(4,1)
 
-    def returnToMain(self=None):
+    def return_to_main(self=None):
         GlobalObjects.escInUse = False
         GlobalObjects.renderingThread.renderobj=Menus.main
     
     levelentries=(
-    MenuEntry("Back",returnToMain),
-    MenuEntry("World 1",goToWorld1),
-    MenuEntry("World 2",goToWorld2),
-    MenuEntry("World 3",goToWorld3),
-    MenuEntry("World 4",goToWorld4)
+    MenuEntry("Back",return_to_main),
+    MenuEntry("World 1",world_1),
+    MenuEntry("World 2",world_2),
+    MenuEntry("World 3",world_3),
+    MenuEntry("World 4",world_4)
     )
 
     def __init__(self):
@@ -101,7 +101,7 @@ class LevelMenu(Menu):
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    self.returnToMain()
+                    self.return_to_main()
 
 Menus.levels=LevelMenu()
 

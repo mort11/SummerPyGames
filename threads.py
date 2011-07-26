@@ -60,6 +60,6 @@ class RenderThread(threading.Thread):
 
 
 
-class IOThread(threading.Thread):
+#class IOThread(threading.Thread):
     
     

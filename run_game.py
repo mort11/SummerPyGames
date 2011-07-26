@@ -3,7 +3,7 @@ run_game.py
 
 Implements the game logic, providing the Game class 
 '''
-
+import pygame
 from globalvalues import Renderable,Options,GlobalObjects,InputMasks
 class Game(Renderable):
 
@@ -14,12 +14,12 @@ class Game(Renderable):
         self.objectdict=level.objectdict
         self.complete = level.complete
         self.size = level.size
-        self.keyinput=0
-        self.keystocheck=15
+        self.keyinput = 0 
         self.tile_bkd()
+        self.select_player
         if self.objectdict:
             for i in self.objectdict.iterkeys():
-                self.objectdict[i].drawOn(self.screen,i)
+                self.objectdict[i].draw_on(self.screen,i)
 
     def select_player(self):
         self.player = GlobalObjects.playercharacters[self.world]
@@ -31,12 +31,13 @@ class Game(Renderable):
             htiles=ciel(self.size[0]/self.background.get_width())
             vtiles=ciel(self.size[1]/self.background.get_height())
             for htile in range(htiles):
-                levelbkgd.blit(self.background,(htile*self.background.get_width(),0)
+                levelbkgd.blit(self.background,(htile*self.background.get_width(),0))
                 for vtile in range(vtiles):
-                    levelbkgd.blit(self.background,(0,vtile*self.background.get_height())
+                    levelbkgd.blit(self.background,(0,vtile*self.background.get_height()))
         self.background = levelbkgd
 
     def process_events(self,events):
+        keydowns=0
         #if KEYDOWN : KEYDOWN
         #if KEYUP : KEYUP
         #if KEYUP+KEYDOWN : KEYDOWN + CHECK NEXT FRAME
@@ -44,29 +45,30 @@ class Game(Renderable):
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP:
                     self.keyinput |= InputMasks.up
-                    self.keystocheck ^= InputMasks.up
+                    keydowns |= InputMasks.up
                 elif event.key == pygame.K_DOWN:
                     self.keyinput |= InputMasks.down
-                    self.keystocheck ^= InputMasks.down
+                    keydowns |= InputMasks.down
                 elif event.key == pygame.K_LEFT:
                     self.keyinput |= InputMasks.left
-                    self.keystocheck ^= InputMasks.left
+                    keydowns |= InputMasks.left
                 elif event.key == pygame.K_RIGHT:
                     self.keyinput |= InputMasks.right
-                    self.keystocheck ^= InputMasks.right
-            elif event.type == pygame.KEYDOWN:
+                    keydowns |= InputMasks.right
+            elif event.type == pygame.KEYUP:
                 if event.key == pygame.K_UP:
                     self.keyinput &= ~InputMasks.up
-                    self.keystocheck ^= InputMasks.up
                 elif event.key == pygame.K_DOWN:
                     self.keyinput &= ~InputMasks.down
-                    self.keystocheck ^= InputMasks.down
                 elif event.key == pygame.K_LEFT:
                     self.keyinput &= ~InputMasks.left
-                    self.keystocheck ^= InputMasks.left
                 elif event.key == pygame.K_RIGHT:
                     self.keyinput &= ~InputMasks.right
-                    self.keystocheck ^= InputMasks.right
-        self.inputmasks ^= self.keystocheck
+        # filtered input
+        return self.keyinput | keydowns
+
+
+
     def draw(self, events):
+        input=self.process_events(events)
         

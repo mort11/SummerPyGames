@@ -3,7 +3,7 @@ objects.py
 Provides an abstraction layer over pygames Surfaces, and in addition to 
 rectangles, provides other polygons with collision 
 '''
-import pygame,math
+import pygame,math,os
 from globalvalues import GlobalObjects
 pygame.init()
 class Object:
@@ -14,13 +14,13 @@ class Object:
         self.pivot=pivotpixel
         self.velocity=(0,0)
     
-    def getVectorAngle(self):
+    def angle(self):
         return math.degrees(math.atan2(self.velocity[0],self.velocity[1]))
     
-    def drawOn(self,surface,at=(0,0)):
+    def draw_on(self,surface,at=(0,0)):
         surface.blit(self.surface,at)
     
-    def collidesWith(self,otherobject):
+    def collides_with(self,otherobject):
         if self.collides:
             from pygame import mask
             mask.from_threshold(self.surface,(0,0,0,0),(1,1,1,1))

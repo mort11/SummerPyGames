@@ -21,38 +21,27 @@
 #       MA 02110-1301, USA.
 #       
 #       
-import pygame, objects, levels,menus,threads
+import pygame,threads,menus,levels
 from globalvalues import GlobalObjects,Events
 pygame.init()
 def main():
-    options=menus.OptionsMenu()
     render=threads.RenderThread()
-    render.renderobj=options
     render.start()
     eventthread=threads.EventThread()
     eventthread.start()
     def cleanup():
         render.killed.set()
-        with Events.trigger,Events.done:
-            Events.trigger.wait()
         render.join()
         eventthread.killed.set()
         eventthread.join()
     running = True
     while running:
-        with Events.trigger:
-            for event in Events.events:
-                if event.type == pygame.QUIT:
+        for event in Events.events:
+            if event.type == pygame.QUIT:
+                running = False
+            elif event.type == pygame.KEYDOWN:
+                if not GlobalObjects.escInUse and event.key == pygame.K_ESCAPE:
                     running = False
-                    break
-                elif event.type == pygame.KEYDOWN:
-                    with GlobalObjects.lock:
-                        if GlobalObjects.escInUse:
-                            GlobalObjects.lock.release()
-                            break
-                    if event.key == pygame.K_ESCAPE:
-                        running = False
-                        break
         with Events.trigger,Events.done:
             Events.trigger.wait()
     cleanup()

@@ -4,11 +4,11 @@ Provides the Menu,MenuEntry, MainMenu and OptionsMenu classes
 '''
 import pygame,threading
 pygame.init()
-from globalvalues import Options,Renderable
+from globalvalues import Options,Renderable,Menus,GlobalObjects
 menufont = pygame.font.SysFont("droidsans",20)
 
+
 class Menu(Renderable):
-    
     def __init__(self,entries,initialentry=None):
         Renderable.__init__(self)
         self.selectedentry=initialentry
@@ -16,22 +16,20 @@ class Menu(Renderable):
         for i in entries:
             if not self.selectedentry:
                 self.selectedentry=i
-                self.addEntry(self.selectedentry)
+                self.add_entry(self.selectedentry)
                 continue
-            self.addEntry(i)
+            self.add_entry(i)
 
-    def selectEntry(self,entry):
+    def select_entry(self,entry):
         for i in self.entrylist:
             if i.compare(entry):
                 self.selectedentry=i
 
-    def unpackEntry(self,key,entries):
-        return MenuEntry(key,entries.get(key))
 
-    def addEntry(self, entry):
+    def add_entry(self, entry):
         self.entrylist.append(entry)
 
-    def nextEntry(self):
+    def next_entry(self):
         iterator=-1
         for i in self.entrylist:
             iterator+=1
@@ -44,7 +42,7 @@ class Menu(Renderable):
         Options.lock.release()
         self.selectedentry=self.entrylist[iterator-1]
 
-    def prevEntry(self):
+    def prev_entry(self):
         iterator=-1
         for i in self.entrylist:
             iterator+=1
@@ -60,24 +58,23 @@ class Menu(Renderable):
         except IndexError:
             self.selectedentry=self.entrylist[0]
     
-    def activateEntry(self):
+    def activate_entry(self):
         self.selectedentry.activate()
 
     def update(self,events):
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_DOWN:
-                    self.nextEntry()
+                    self.next_entry()
                 elif event.key == pygame.K_UP:
-                    self.prevEntry()
+                    self.prev_entry()
                 elif event.key == pygame.K_RETURN:
-                    self.activateEntry()
+                    self.activate_entry()
 
     def draw(self,events):
         self.update(events)
-        screen = pygame.display.get_surface()
-        screen.fill((0,0,0))
-        screencenter=(screen.get_width()/2,screen.get_height()/2)
+        self.screen.fill((0,0,0))
+        screencenter=(self.screen.get_width()/2,self.screen.get_height()/2)
         setlength=len(self.entrylist)
         if setlength > 0:
             #dynamic drawing of as many rectangles as needed
@@ -87,14 +84,13 @@ class Menu(Renderable):
                 height-=16
             for i in self.entrylist:
                 if i == self.selectedentry:
-                    pygame.draw.rect(screen,(20,255,20),
+                    pygame.draw.rect(self.screen,(20,255,20),
                     (screencenter[0]-258,height-2,516,36))
-                pygame.draw.rect(screen,(255,255,255),(screencenter[0]-256,
+                pygame.draw.rect(self.screen,(255,255,255),(screencenter[0]-256,
                 height,512,32))
-                text=i.getText()
-                displaysize=menufont.size(text)
-                renderedfont=menufont.render(text,True,(0,0,0))
-                screen.blit(renderedfont,(screencenter[0]-displaysize[0]/2,
+                displaysize=menufont.size(i.get_text())
+                renderedfont=menufont.render(i.get_text(),True,(0,0,0))
+                self.screen.blit(renderedfont,(screencenter[0]-displaysize[0]/2,
                 height+4))
                 height-=64
 
@@ -109,23 +105,20 @@ that will be appended to the static text if present
 '''
 
 class MenuEntry:
-    def __init__(self, title, method,dynamic=(None,None,None),lock=None):
+    def __init__(self, title, method,dynamic=(None,None,None)):
         self.text=title
         self.boundmethod=method
         self.dynamicmethod = dynamic[0]
         self.iftrue = dynamic[1]
         self.iffalse = dynamic[2]
-        if lock:
-            self.lock = threading.Lock()
-        else:
-            self.lock=lock
 
-    def getText(self):
-        with self.lock:
-            if self.dynamicmethod():
-                return self.text+str(self.iftrue)
-            else:
-                return self.text+str(self.iffalse)
+    def get_text(self):
+        if not self.dynamicmethod:
+            return self.text
+        if self.dynamicmethod():
+            return self.text+str(self.iftrue)
+        else:
+            return self.text+str(self.iffalse)
 
     def compare(self,other):
         return self.text == other.text and self.boundmethod==other.boundmethod \
@@ -133,78 +126,84 @@ class MenuEntry:
          and self.iffalse == other.iffalse
 
     def activate(self):
-        with self.lock:
-            self.boundmethod()
+        self.boundmethod()
 
 class OptionsMenu(Menu):
     
-    def getVisibleFPS():
-        Options.lock.acquire()
-        fps=Options.showFramerate
-        Options.lock.release()
-        return fps
+    def get_visible_fps():
+        return Options.showFramerate
     
-    def toggleShowFPS():
-        Options.lock.acquire()
-        if Options.showFramerate:
-            Options.showFramerate=False
-        else:
-            Options.showFramerate=True
-        Options.lock.release()
+    def toggle_show_fps():
+        with Options.lock:
+            Options.showFramerate = not Options.showFramerate
 
-    def getFramerateLimit():
-        Options.lock.acquire()
-        limit=Options.limitFramerate
-        Options.lock.release()
-        return limit
+    def get_fps_limit():
+        return Options.limitFramerate
     
-    def toggleLimitFramerate():
-        Options.lock.acquire()
-        if Options.limitFramerate == 60:
-            Options.limitFramerate = 0
-        else:
-            Options.limitFramerate = 60
-        Options.lock.release()
+    def toggle_limit_framerate():
+        with Options.lock:
+            if Options.limitFramerate == 60:
+                Options.limitFramerate = 0
+            else:
+                Options.limitFramerate = 60
 
-    def getBackgrounds():
-        Options.lock.acquire()
-        backgrounds=Options.backgrounds
-        Options.lock.release()
-        return backgrounds
+    def get_backgrounds():
+        return Options.backgrounds
     
-    def toggleBackgrounds():
-        Options.lock.acquire()
-        if Options.backgrounds:
-            Options.backgrounds=False
-        else:
-            Options.backgrounds=True
-        Options.lock.release()
+    def toggle_backgrounds():
+        with Options.lock:
+            Options.backgrounds= not Options.backgrounds
 
-    def getMenuWrap():
-        Options.lock.acquire()
-        wrap=Options.menuWrap
-        Options.lock.release()
-        return wrap
+    def get_menu_wrap():
+        return Options.menuWrap
     
-    def toggleMenuWrap():
-        Options.lock.acquire()
-        if Options.menuWrap:
-            Options.menuWrap=False
-        else:
-            Options.menuWrap=True
-        Options.lock.release()
+    def toggle_menu_wrap():
+        with Options.lock:
+            Options.menuWrap = not Options.menuWrap
+
+    def return_to_main(self=None):
+        with GlobalObjects.lock:
+            GlobalObjects.escInUse = False
+            GlobalObjects.renderingThread.renderobj = Menus.main
+
 
     optionsentries = (
-    MenuEntry("Menu Wrapping: ",toggleMenuWrap,(getMenuWrap,"On","Off"),
-    Options.lock),
-    MenuEntry("Backgrounds: ",toggleBackgrounds,(getBackgrounds,"On","Off"),
-    Options.lock),
-    MenuEntry("Limit Framerate: ",toggleLimitFramerate,(getFramerateLimit,"On",
-    "Off"),Options.lock),
-    MenuEntry("Show Framerate: ",toggleShowFPS,(getVisibleFPS,"On","Off"),
-    Options.lock)
+    MenuEntry("Menu Wrapping: ",toggle_menu_wrap,(get_menu_wrap,"On","Off")),
+    MenuEntry("Backgrounds: ",toggle_backgrounds,(get_backgrounds,"On","Off")),
+    MenuEntry("Limit Framerate: ",toggle_limit_framerate,(get_fps_limit,"On",
+    "Off")),
+    MenuEntry("Show Framerate: ",toggle_show_fps,(get_visible_fps,"On","Off")),
+    MenuEntry("Back",return_to_main)
     )
     
     def __init__(self):
         Menu.__init__(self,OptionsMenu.optionsentries)
+    
+    def draw(self,events):
+        Menu.draw(self,events)
+        for event in events:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    self.return_to_main()
 
+class MainMenu(Menu):
+    
+    def switch_to_levels():
+        GlobalObjects.escInUse = True
+        GlobalObjects.renderingThread.renderobj=Menus.levels
+    
+    def switch_to_options():
+        GlobalObjects.escInUse = True
+        GlobalObjects.renderingThread.renderobj=Menus.options
+
+    mainentries = (
+    MenuEntry("Levels",switch_to_levels),
+    MenuEntry("Options",switch_to_options)
+    )
+
+    def __init__(self):
+        Menu.__init__(self,MainMenu.mainentries)
+
+
+Menus.main = MainMenu()
+Menus.options = OptionsMenu()

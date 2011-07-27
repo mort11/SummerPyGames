@@ -6,6 +6,14 @@ rectangles, provides other polygons with collision
 import pygame,math,os
 from globalvalues import GlobalObjects
 pygame.init()
+class Collison:
+    #set this bit to 0 if no collision
+    collides=1
+    top=2
+    bottom=4
+    right=8
+    left=16
+    
 class Object:
     def __init__(self, texture, ifcollides=True):
         self.surface = pygame.image.load(texture)
@@ -23,7 +31,27 @@ class Object:
     def collides_with(self,otherobject):
         if self.collides:
             from pygame import mask
-            mask.from_threshold(self.surface,(0,0,0,0),(1,1,1,1))
+            selfmask=mask.from_threshold(self.surface,(0,0,0,0),(1,1,1,1))
+            othermask=mask.from_threshold(otherobject.surface,(0,0,0,0),(1,1,1,1))
+            return selfmask.collides(othermask)
+        return False
+
+    def collides_dir(self,otherobject):
+        output=0
+        collision=self.collides_with(otherobject)
+        if collision:
+            center=self.mask.from_threshold(self.surface,(0,0,0,0),(1,1,1,1)).centroid()
+            output |= Collison.collides
+            if center[0] <=collision[0]:
+                output |= Collison.right
+            else:
+                output |= Collison.left
+            if center[1] <= collision[1]:
+                output |= = Collison.bottom
+            else:
+                output |= Collison.top
+        return output
+
 
 Glenda=Object('assets'+os.sep+'characters'+os.sep+'Glenda.png')
 Konqi=Object('assets'+os.sep+'characters'+os.sep+'Konqi.png')

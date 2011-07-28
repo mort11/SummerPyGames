@@ -14,3 +14,5 @@ Line 3 is the coordinates of the upper left pixel of the player at starts
 
 Subsequent lines are the parameters of an object,
  followed by the upper left coordinate to draw them
+ 
+The last line is the tuple of the center of the end circle

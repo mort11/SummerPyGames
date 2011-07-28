@@ -28,9 +28,9 @@ class Game(Renderable):
     def tile_bkd(self):
         levelbkgd = pygame.Surface(self.size)
         if Options.backgrounds:
-            from math import ciel
-            htiles=ciel(self.size[0]/self.background.get_width())
-            vtiles=ciel(self.size[1]/self.background.get_height())
+            import math
+            htiles=int(math.ceil(self.size[0]/self.background.get_width()))
+            vtiles=int(math.ceil(self.size[1]/self.background.get_height()))
             for htile in range(htiles):
                 levelbkgd.blit(self.background,(htile*self.background.get_width(),0))
                 for vtile in range(vtiles):
@@ -76,9 +76,12 @@ class Game(Renderable):
         for i in self.objectdict.iterkeys():
             collisions |= self.player.collides_dir(self.objectdict[i])
         if collisions & Collison.collides == Collison.collides:
-            if collisions & Collison.bottom:
+            if collisions & Collison.bottom == Collison.bottom:
                 if self.player.velocity[1] < 0: self.player.velocity[1] = 0
-                if self.player.acceleration[1] < 0: self.player.velocity[1=0]
+                if self.player.acceleration[1] < 0: self.player.velocity[1] = 0
+            if collisions & Collison.top == Collison.top:
+                if self.player.velocity[1] > 0: self.player.velocity[1] = 0
+                if self.player.acceleration[1] > 0: self.player.velocity[1] = 0
         #Gotta deal with the 2-keys pressed scenario somehow.
         
         if input & Input.up == Input.up:

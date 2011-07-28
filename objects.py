@@ -13,7 +13,6 @@ class Object:
         self.surface = pygame.image.load(texture)
         # using a mask texture lets artists use more of their alpha channels
         self.collides=ifcollides
-        self.pivot=pivotpixel
         #directions should probably be done opposite the way pygame does them,
         # just for the sake of our sanity
         # so x >0 = right ; y >0 = up
@@ -33,30 +32,30 @@ class Object:
             from pygame import mask
             selfmask=mask.from_threshold(self.surface,(0,0,0,0),(1,1,1,1))
             othermask=mask.from_threshold(otherobject.surface,(0,0,0,0),(1,1,1,1))
-            return selfmask.collides(othermask)
+            return selfmask.overlap(othermask)
         return False
 
     def collides_dir(self,otherobject):
         output=0
         collision=self.collides_with(otherobject)
         if collision:
-            center=self.mask.from_threshold(self.surface,(0,0,0,0),(1,1,1,1)).centroid()
+            center=pygame.mask.from_threshold(self.surface,(0,0,0,0),(1,1,1,1)).centroid()
             output |= Collison.collides
-            if center[0] <=collision[0]:
+            if center[0]+0.25*self.surface.get_width() <=collision[0]:
                 output |= Collison.right
-            else:
+            elif center[0]-0.25*self.surface.get_width() >=collision[0]:
                 output |= Collison.left
-            if center[1] <= collision[1]:
-                output |= = Collison.bottom
-            else:
+            if center[1]+0.25*self.surface.get_height()<= collision[1]:
+                output |= Collison.bottom
+            elif center[1]+0.25*self.surface.get_height()<= collision[1]:
                 output |= Collison.top
         return output
 
 
-#Glenda=Object('assets'+os.sep+'characters'+os.sep+'Glenda.png')
-#Konqi=Object('assets'+os.sep+'characters'+os.sep+'Konqi.png')
-#Beastie=Object('assets'+os.sep+'characters'+os.sep+'Beastie.png')
-#Schilli=Object('assets'+os.sep+'characters'+os.sep+'Schilli.png')
-#GlobalObjects.playercharacters = {Glenda:1,Konqi:2,Beastie:3,Schilli:4}
+Glenda=Object('assets'+os.sep+'characters'+os.sep+'Glenda.png')
+Konqi=Object('assets'+os.sep+'characters'+os.sep+'Konqi.png')
+Beastie=Object('assets'+os.sep+'characters'+os.sep+'Beastie.png')
+Schilli=Object('assets'+os.sep+'characters'+os.sep+'Schilli.png')
+GlobalObjects.playercharacters = {1:Glenda,2:Konqi,3:Beastie,4:Schilli}
 
 

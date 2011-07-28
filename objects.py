@@ -4,15 +4,9 @@ Provides an abstraction layer over pygames Surfaces, and in addition to
 rectangles, provides other polygons with collision 
 '''
 import pygame,math,os
-from globalvalues import GlobalObjects
+from globalvalues import GlobalObjects,Collison
 pygame.init()
-class Collison:
-    #set this bit to 0 if no collision
-    collides=1
-    top=2
-    bottom=4
-    right=8
-    left=16
+
     
 class Object:
     def __init__(self, texture, ifcollides=True):
@@ -20,12 +14,18 @@ class Object:
         # using a mask texture lets artists use more of their alpha channels
         self.collides=ifcollides
         self.pivot=pivotpixel
+        #directions should probably be done opposite the way pygame does them,
+        # just for the sake of our sanity
+        # so x >0 = right ; y >0 = up
+        self.acceleration=(0,0)
         self.velocity=(0,0)
+        self.lastdraw=pygame.time.get_ticks()
     
     def angle(self):
         return math.degrees(math.atan2(self.velocity[0],self.velocity[1]))
     
     def draw_on(self,surface,at=(0,0)):
+        self.lastdraw=pygame.time.get_ticks()
         surface.blit(self.surface,at)
     
     def collides_with(self,otherobject):
@@ -53,10 +53,10 @@ class Object:
         return output
 
 
-Glenda=Object('assets'+os.sep+'characters'+os.sep+'Glenda.png')
-Konqi=Object('assets'+os.sep+'characters'+os.sep+'Konqi.png')
-Beastie=Object('assets'+os.sep+'characters'+os.sep+'Beastie.png')
-Schilli=Object('assets'+os.sep+'characters'+os.sep+'Schilli.png')
-GlobalObjects.playercharacters = {Glenda:1,Konqi:2,Beastie:3,Schilli:4}
+#Glenda=Object('assets'+os.sep+'characters'+os.sep+'Glenda.png')
+#Konqi=Object('assets'+os.sep+'characters'+os.sep+'Konqi.png')
+#Beastie=Object('assets'+os.sep+'characters'+os.sep+'Beastie.png')
+#Schilli=Object('assets'+os.sep+'characters'+os.sep+'Schilli.png')
+#GlobalObjects.playercharacters = {Glenda:1,Konqi:2,Beastie:3,Schilli:4}
 
 

@@ -36,12 +36,13 @@ def main():
         eventthread.join()
     running = True
     while running:
-        for event in Events.events:
-            if event.type == pygame.QUIT:
-                running = False
-            elif event.type == pygame.KEYDOWN:
-                if not GlobalObjects.escInUse and event.key == pygame.K_ESCAPE:
+        with Events.processing:
+            for event in Events.events:
+                if event.type == pygame.QUIT:
                     running = False
+                elif event.type == pygame.KEYDOWN:
+                    if not GlobalObjects.escInUse and event.key == pygame.K_ESCAPE:
+                        running = False
         with Events.trigger,Events.done:
             Events.trigger.wait()
     cleanup()

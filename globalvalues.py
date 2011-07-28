@@ -46,9 +46,17 @@ class Menus:
     options = None
     levels = None
 
-class InputMasks:
+class Input:
     left = 1
     right = 2
     up = 4
     down = 8
+
+class Collison:
+    #set this bit to 0 if no collision
+    collides=1
+    top=2
+    bottom=4
+    right=8
+    left=16
 

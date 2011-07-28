@@ -4,7 +4,7 @@ run_game.py
 Implements the game logic, providing the Game class 
 '''
 import pygame
-from globalvalues import Renderable,Options,GlobalObjects,InputMasks
+from globalvalues import Renderable,Options,GlobalObjects,Input
 class Game(Renderable):
 
     def __init__(self,level):
@@ -45,26 +45,26 @@ class Game(Renderable):
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP:
-                    self.keyinput |= InputMasks.up
-                    keydowns |= InputMasks.up
+                    self.keyinput |= Input.up
+                    keydowns |= Input.up
                 elif event.key == pygame.K_DOWN:
-                    self.keyinput |= InputMasks.down
-                    keydowns |= InputMasks.down
+                    self.keyinput |= Input.down
+                    keydowns |= Input.down
                 elif event.key == pygame.K_LEFT:
-                    self.keyinput |= InputMasks.left
-                    keydowns |= InputMasks.left
+                    self.keyinput |= Input.left
+                    keydowns |= Input.left
                 elif event.key == pygame.K_RIGHT:
-                    self.keyinput |= InputMasks.right
-                    keydowns |= InputMasks.right
+                    self.keyinput |= Input.right
+                    keydowns |= Input.right
             elif event.type == pygame.KEYUP:
                 if event.key == pygame.K_UP:
-                    self.keyinput &= ~InputMasks.up
+                    self.keyinput &= ~Input.up
                 elif event.key == pygame.K_DOWN:
-                    self.keyinput &= ~InputMasks.down
+                    self.keyinput &= ~Input.down
                 elif event.key == pygame.K_LEFT:
-                    self.keyinput &= ~InputMasks.left
+                    self.keyinput &= ~Input.left
                 elif event.key == pygame.K_RIGHT:
-                    self.keyinput &= ~InputMasks.right
+                    self.keyinput &= ~Input.right
         # filtered input
         return self.keyinput | keydowns
 
@@ -72,17 +72,24 @@ class Game(Renderable):
 
     def draw(self, events):
         input=self.process_events(events)
+        collisions =0
+        for i in self.objectdict.iterkeys():
+            collisions |= self.player.collides_dir(self.objectdict[i])
+        if collisions & Collison.collides == Collison.collides:
+            if collisions & Collison.bottom:
+                if self.player.velocity[1] < 0: self.player.velocity[1] = 0
+                if self.player.acceleration[1] < 0: self.player.velocity[1=0]
+        #Gotta deal with the 2-keys pressed scenario somehow.
         
-        #Gotta deal with the 2-keys pressed scenario
-        if input & InputMasks.up == InputMasks.up:
+        if input & Input.up == Input.up:
             #accelerate the character up? Check inventory?
             pass
-        if input & InputMasks.left == InputMasks.left:
+        if input & Input.left == Input.left:
             #accelerate left
             pass
-        if input & InputMasks.down == InputMasks.down:
+        if input & Input.down == Input.down:
             #crouch?
             pass
-        if input & InputMasks.right == InputMasks.right:
+        if input & Input.right == Input.right:
             #accelerate right
             pass

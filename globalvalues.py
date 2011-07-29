@@ -31,7 +31,11 @@ class Events:
     done = threading.Semaphore(2)
     events = pygame.event.get()
     trigger = threading.Condition()
+<<<<<<< HEAD
     processing = threading.Semaphore(2)
+=======
+    processing = threading.Condition()
+>>>>>>> 30faf85033e5d834dcfc924249d04057005eaee3
     
 class GlobalObjects:
     playercharacters = None

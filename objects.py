@@ -16,6 +16,8 @@ class Object:
         #directions should probably be done opposite the way pygame does them,
         # just for the sake of our sanity
         # so x >0 = right ; y >0 = up
+        self.moving=False
+        self.rfootfoward=False
         self.acceleration=(0,0)
         self.velocity=(0,0)
         self.lastdraw=pygame.time.get_ticks()

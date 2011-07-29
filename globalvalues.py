@@ -32,7 +32,7 @@ class Events:
     events = pygame.event.get()
     trigger = threading.Condition()
     processing = threading.Semaphore(2)
-    processing = threading.Condition()
+    
     
 class GlobalObjects:
     playercharacters = None

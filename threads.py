@@ -24,11 +24,10 @@ class EventThread(threading.Thread):
             with Events.trigger:
                 Events.events = pygame.event.get()
                 Events.trigger.notifyAll()
-            GlobalObjects.clock.tick(Options.limitFramerate)
-            #while Events.processing.acquire(False):
-                #print "waitng"
-                #Events.processing.release()
-
+            if Options.limitFramerate: 
+                GlobalObjects.clock.tick(Options.limitFramerate)
+            else:
+                GlobalObjects.clock.tick(1000)
 
 
 class RenderThread(threading.Thread):
@@ -52,15 +51,14 @@ class RenderThread(threading.Thread):
         while not self.killed.isSet():
             with Events.done, Events.trigger:
                 Events.trigger.wait()
-            with Events.processing:
-                if self.renderobj:
-                    with self.renderobj.lock:
-                        self.renderobj.draw(Events.events)
-                if Options.showFramerate:
-                    framerate = GlobalObjects.clock.get_fps()
-                    self.screen.blit(frameratefont.render(str(framerate),False,
-                    (255,0,0)),(0,0))
-                pygame.display.flip()
+            if self.renderobj:
+                with self.renderobj.lock:
+                    self.renderobj.draw(Events.events)
+            if Options.showFramerate:
+                framerate = GlobalObjects.clock.get_fps()
+                self.screen.blit(frameratefont.render(str(framerate),False,
+                (255,0,0)),(0,0))
+            pygame.display.flip()
 
 
 

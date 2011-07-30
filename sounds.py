@@ -1,16 +1,13 @@
-#A class to setup music in the MORT pygame
 
-import pygame
-import os
-import time
+import pygame,os
 
 pygame.mixer.init()
 
 class Sounds:
-	levelOnePath = "resources/" + "levelonemusic.ogg"
-	levelTwoPath = "resources/" + "leveltwomusic.ogg"
-	levelThreePath = "resources/" + "levelthreemusic.ogg"
-	bossPath = "resources/" + "bossmusic.ogg"
+	levelOnePath = "assets"+ os.sep + "levelonemusic.ogg"
+	levelTwoPath = "assets"+os.sep + "leveltwomusic.ogg"
+	levelThreePath = "assets"+ os.sep + "levelthreemusic.ogg"
+	bossPath = "assets"+ os.sep + "bossmusic.ogg"
 
 	levelOnePathExists = os.path.exists(levelOnePath)
 	levelTwoPathExists = os.path.exists(levelTwoPath)
@@ -27,7 +24,7 @@ class Sounds:
 			pygame.mixer.channel(1).stop()
 		if level == 1 and Sounds.levelOnePathExists:
 			pygame.mixer.Channel(1).play(Sounds.levelOneSound, loops = -1)
-			time.sleep(Sounds.levelOneSound.get_length()*3)#sleep is temperary, just so sound plays when executed alone.
+			time.sleep(Sounds.levelOneSound.get_length()*3)
 		elif level == 2 and Sounds.levelTwoPathExists:
 			pygame.mixer.Channel(1).play(Sounds.levelTwoSound, loops = -1)
 			time.sleep(Sounds.levelTwoSound.get_length()*3)

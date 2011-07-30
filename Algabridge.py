@@ -29,6 +29,9 @@ def main():
     render.start()
     eventthread=threads.EventThread()
     eventthread.start()
+    """
+    Exits the game cleanly, ensuring that all threads exit
+    """
     def cleanup():
         render.killed.set()
         render.join()
@@ -36,13 +39,15 @@ def main():
         eventthread.join()
     running = True
     while running:
-        with Events.processing:
-            for event in Events.events:
-                if event.type == pygame.QUIT:
+        for event in Events.events:
+            """
+            Checks to see if the game is quitting
+            """
+            if event.type == pygame.QUIT:
+                running = False
+            elif event.type == pygame.KEYDOWN:
+                if not GlobalObjects.escInUse and event.key == pygame.K_ESCAPE:
                     running = False
-                elif event.type == pygame.KEYDOWN:
-                    if not GlobalObjects.escInUse and event.key == pygame.K_ESCAPE:
-                        running = False
         with Events.trigger,Events.done:
             Events.trigger.wait()
     cleanup()

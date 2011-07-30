@@ -7,8 +7,13 @@ pygame.init()
 from globalvalues import Options,Renderable,Menus,GlobalObjects
 menufont = pygame.font.SysFont("droidsans",20)
 
-
+"""
+Draws a dynamic menu
+"""
 class Menu(Renderable):
+    """
+    Constructs the Menu, building the list of entries
+    """
     def __init__(self,entries,initialentry=None):
         Renderable.__init__(self)
         self.selectedentry=initialentry
@@ -16,19 +21,20 @@ class Menu(Renderable):
         for i in entries:
             if not self.selectedentry:
                 self.selectedentry=i
-                self.add_entry(self.selectedentry)
+                self.entrylist.append(self.selectedentry)
                 continue
-            self.add_entry(i)
-
+            self.entrylist.append(i)
+    """
+    Selects the entry, highlighting it
+    """
     def select_entry(self,entry):
         for i in self.entrylist:
             if i.compare(entry):
                 self.selectedentry=i
 
-
-    def add_entry(self, entry):
-        self.entrylist.append(entry)
-
+    """
+    Shifts the selected entry down
+    """
     def next_entry(self):
         iterator=-1
         for i in self.entrylist:
@@ -42,6 +48,9 @@ class Menu(Renderable):
         Options.lock.release()
         self.selectedentry=self.entrylist[iterator-1]
 
+    """
+    Shifts the selected entry up
+    """
     def prev_entry(self):
         iterator=-1
         for i in self.entrylist:
@@ -58,10 +67,16 @@ class Menu(Renderable):
         except IndexError:
             self.selectedentry=self.entrylist[0]
     
+    """
+    Calls the entry's activate method
+    """
     def activate_entry(self):
         self.selectedentry.activate()
 
-    def update(self,events):
+    """
+    Processes key presses
+    """
+    def process_events(self,events):
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_DOWN:
@@ -71,8 +86,11 @@ class Menu(Renderable):
                 elif event.key == pygame.K_RETURN:
                     self.activate_entry()
 
+    """
+    Draws the menu, highlighting the selected entry
+    """
     def draw(self,events):
-        self.update(events)
+        self.process_events(events)
         self.screen.fill((0,0,0))
         screencenter=(self.screen.get_width()/2,self.screen.get_height()/2)
         setlength=len(self.entrylist)
@@ -105,6 +123,7 @@ that will be appended to the static text if present
 '''
 
 class MenuEntry:
+    
     def __init__(self, title, method,dynamic=(None,None,None)):
         self.text=title
         self.boundmethod=method

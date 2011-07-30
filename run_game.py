@@ -4,9 +4,16 @@ run_game.py
 Implements the game logic, providing the Game class 
 '''
 import pygame
-from globalvalues import Renderable,Options,GlobalObjects,Input
-class Game(Renderable):
+from globalvalues import Renderable,Options,GlobalObjects,Input,Collison
 
+"""
+Takes apart a level object and renders the necessary components for 
+playing the game
+"""
+class Game(Renderable):
+    """
+    Sets up the object
+    """
     def __init__(self,level):
         Renderable.__init__(self)
         self.world=level.world
@@ -16,15 +23,16 @@ class Game(Renderable):
         self.size = level.size
         self.keyinput = 0 
         self.tile_bkd()
-        self.select_player()
         if self.objectdict:
             for i in self.objectdict.iterkeys():
                 self.objectdict[i].draw_on(self.screen,i)
-        self.player.draw_on(self.screen,level.playerstart)
-
-    def select_player(self):
         self.player = GlobalObjects.playercharacters[self.world]
-
+        self.player.draw_on(self.screen,level.playerstart)
+    
+    """
+    Tiles the background so that it encompasses the entire level, or just paints
+    black if the backgrounds option is false
+    """
     def tile_bkd(self):
         levelbkgd = pygame.Surface(self.size)
         if Options.backgrounds:
@@ -36,12 +44,17 @@ class Game(Renderable):
                 for vtile in range(vtiles):
                     levelbkgd.blit(self.background,(0,vtile*self.background.get_height()))
         self.background = levelbkgd
-
+        
+    """
+    Processes and filters keyboard input.
+    The filter assumes that the events will be processed in order, and 
+    behaves according to these rules:
+    if KEYDOWN : KEYDOWN
+    if KEYUP : KEYUP
+    if KEYDOWN+KEYUP : KEYDOWN FOR 1 FRAME
+    """
     def process_events(self,events):
         keydowns=0
-        #if KEYDOWN : KEYDOWN
-        #if KEYUP : KEYUP
-        #if KEYUP+KEYDOWN : KEYDOWN FOR 1 FRAME
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP:
@@ -65,11 +78,11 @@ class Game(Renderable):
                     self.keyinput &= ~Input.left
                 elif event.key == pygame.K_RIGHT:
                     self.keyinput &= ~Input.right
-        # filtered input
         return self.keyinput | keydowns
 
-
-
+    """
+    Draws the level, processing input and checking collisions
+    """
     def draw(self, events):
         input=self.process_events(events)
         collisions =0

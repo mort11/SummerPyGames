@@ -18,16 +18,18 @@ class Object:
         # so x >0 = right ; y >0 = up
         self.moving=False
         self.rfootfoward=False
-        self.acceleration=(0,0)
-        self.velocity=(0,0)
+        self.acceleration=[0,0]
+        self.velocity=[0,0]
+        self.position = [0, 0]
         self.lastdraw=pygame.time.get_ticks()
     
     def angle(self):
         return math.degrees(math.atan2(self.velocity[0],self.velocity[1]))
     
-    def draw_on(self,surface,at=(0,0)):
+    def draw_on(self,surface,at=[0, 0]):
         self.lastdraw=pygame.time.get_ticks()
         surface.blit(self.surface,at)
+        self.position = at
     
     def collides_with(self,otherobject):
         if self.collides:

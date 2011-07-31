@@ -22,10 +22,10 @@ class Level(Renderable):
         self.world=worldnum
         self.stage=stagenum
         self.time=-2000
-        self.size = (0,0)
-        self.playerstart = (0,0)
+        self.size = self.screen.get_size()
+        self.playerstart = (0,500)
         self.background = pygame.image.load("assets"+os.sep+"backgrounds"
-        +os.sep+"world"+str(worldnum)+".png")
+        +os.sep+"world"+str(worldnum)+".jpg")
         if datafile:
             self.from_file(datafile)
         else:
@@ -44,7 +44,7 @@ class Level(Renderable):
     def from_file(self,datafile):
         #stub implementation of level loading
         print "Loading: "+datafile
-        self.objectdict=dict()
+        self.objectdict=dict()#{(0, 0): Object("assets" + os.sep + "platforms" + os.sep + "world11.png")}
     
     """
     Loads the level based on world and stage number

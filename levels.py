@@ -36,7 +36,7 @@ class Level(Renderable):
     The string is of the form "World X - Stage Y"
     """
     def pretty_name(self):
-        return 'World '+ str(self.world)+' - Stage '+str(self.stage)
+        return 'World '+ str(self.world) + ' - Stage '+str(self.stage)
     
     """
     Loads the level off the disk, parsing it as described in levelformat
@@ -44,7 +44,21 @@ class Level(Renderable):
     def from_file(self,datafile):
         #stub implementation of level loading
         print "Loading: "+datafile
-        self.objectdict=dict()#{(0, 0): Object("assets" + os.sep + "platforms" + os.sep + "world11.png")}
+        
+        self.objectdict=dict()
+        
+        levelfile = open(datafile, "r")
+        levellines = levelfile.read().split("\n")
+        if levellines[0] == "ALGEBRAADVENTURELEVELFILE":
+            self.level_dimensions = levellines[1].split(" ")
+            self.start_position = levellines[2].split(" ")
+            i = 3
+            while levellines[i] != "ENDOBJECTS":
+                object_params = levellines[i].split(" ")
+                self.objectdict.setdefault((int(object_params[1]), int(object_params[2])), Object(object_params[0]))
+                i += 1
+        else:
+            print "Invalid level file"
     
     """
     Loads the level based on world and stage number

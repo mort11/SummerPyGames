@@ -26,7 +26,7 @@ class Object:
     def angle(self):
         return math.degrees(math.atan2(self.velocity[0],self.velocity[1]))
     
-    def draw_on(self,surface,at=[0, 0]):
+    def draw_on(self,surface,at=(0, 0)):
         self.lastdraw=pygame.time.get_ticks()
         surface.blit(self.surface,at)
         self.position = at
@@ -34,9 +34,9 @@ class Object:
     def collides_with(self,otherobject):
         if self.collides:
             from pygame import mask
-            selfmask=mask.from_threshold(self.surface,(0,0,0,0),(1,1,1,1))
-            othermask=mask.from_threshold(otherobject.surface,(0,0,0,0),(1,1,1,1))
-            return selfmask.overlap(othermask)
+            selfmask=mask.from_threshold(self.surface,(0,0,0,0),(1,1,1,1))#.invert()
+            othermask=mask.from_threshold(otherobject.surface,(0,0,0,0),(1,1,1,1))#.invert()
+            return selfmask.overlap(othermask,(1,1))
         return False
 
     def collides_dir(self,otherobject):
@@ -45,9 +45,9 @@ class Object:
         if collision:
             center=pygame.mask.from_threshold(self.surface,(0,0,0,0),(1,1,1,1)).centroid()
             output |= Collison.collides
-            if center[0]+0.25*self.surface.get_width() <=collision[0]:
+            if center[0]+0.25*self.surface.get_width() >=collision[0]:
                 output |= Collison.right
-            elif center[0]-0.25*self.surface.get_width() >=collision[0]:
+            elif center[0]-0.25*self.surface.get_width() <=collision[0]:
                 output |= Collison.left
             if center[1]+0.25*self.surface.get_height()<= collision[1]:
                 output |= Collison.bottom

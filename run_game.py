@@ -26,14 +26,14 @@ class Game(Renderable):
         self.tile_bkd()
         if self.objectdict:
             for i in self.objectdict.iterkeys():
-                self.objectdict[i].draw_on(self.screen,i)
+                self.objectdict[i].draw_on(self.background,i)
         self.player = GlobalObjects.playercharacters[self.world]
         self.player.draw_on(self.screen,level.playerstart)
         self.is_jumping = False
     
     """
     Tiles the background so that it encompasses the entire level, or just paints
-    black if the backgrounds option is false
+    black if the backgrounds option is false 
     """
     def tile_bkd(self):
         levelbkgd = pygame.Surface(self.size)
@@ -92,6 +92,8 @@ class Game(Renderable):
             collisions |= self.player.collides_dir(self.objectdict[i])
         if collisions & Collison.collides == Collison.collides:
             if collisions & Collison.bottom == Collison.bottom:
+                #print "collide"
+                is_jumping = False
                 if self.player.velocity[1] < 0: self.player.velocity[1] = 0
                 if self.player.acceleration[1] < 0: self.player.velocity[1] = 0
             if collisions & Collison.top == Collison.top:
@@ -134,4 +136,4 @@ class Game(Renderable):
             self.player.acceleration[0] = 10
             pass
         if input & Input.left != Input.left and input & Input.right != Input.right:
-            self.player.acceleration[0] = 0
+            self.player.velocity[0] = 0

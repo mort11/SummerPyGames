@@ -24,8 +24,8 @@ class Level(Renderable):
         self.time=-2000
         self.size = self.screen.get_size()
         self.playerstart = (0,500)
-        self.background = pygame.image.load("assets"+os.sep+"backgrounds"
-        +os.sep+"world"+str(worldnum)+".jpg")
+        self.background = pygame.image.load("assets"+os.sep+"world"
+        +os.sep+str(worldnum)+os.sep+"background.jpg")
         if datafile:
             self.from_file(datafile)
         else:

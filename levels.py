@@ -50,8 +50,10 @@ class Level(Renderable):
         levelfile = open(datafile, "r")
         levellines = levelfile.read().split("\n")
         if levellines[0] == "ALGEBRAADVENTURELEVELFILE":
-            self.level_dimensions = levellines[1].split(" ")
-            self.start_position = levellines[2].split(" ")
+            self.size = levellines[1].split(" ")
+            self.size = [int(i) for i in self.size]
+            self.playerstart = levellines[2].split(" ")
+            self.playerstart = [int(i) for i in self.playerstart]
             i = 3
             while levellines[i] != "ENDOBJECTS":
                 object_params = levellines[i].split(" ")

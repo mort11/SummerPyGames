@@ -42,16 +42,15 @@ class Level(Renderable):
     Loads the level off the disk, parsing it as described in levelformat
     """
     def from_file(self,datafile):
-        #stub implementation of level loading
         print "Loading: "+datafile
-        
         self.objectdict=dict()
-        
         levelfile = open(datafile, "r")
         levellines = levelfile.read().split("\n")
         if levellines[0] == "ALGEBRAADVENTURELEVELFILE":
-            self.level_dimensions = levellines[1].split(" ")
-            self.start_position = levellines[2].split(" ")
+            self.size = levellines[1].split(" ")
+            self.size= [int(i) for i in self.size]
+            self.playerstart = levellines[2].split(" ")
+            self.playerstart = [int(i) for i in self.playerstart]
             i = 3
             while levellines[i] != "ENDOBJECTS":
                 object_params = levellines[i].split(" ")

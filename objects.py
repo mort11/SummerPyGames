@@ -7,12 +7,21 @@ import pygame,math,os
 from globalvalues import GlobalObjects,Collison
 pygame.init()
 
+def vadd(x,y):
+    return [x[0]+y[0],x[1]+y[1]]
+
+def vsub(x,y):
+    return [x[0]-y[0],x[1]-y[1]]
+
+def vdot(x,y):
+    return x[0]*y[0]+x[1]*y[1]
     
 class Object:
     def __init__(self, texture, ifcollides=True):
         self.surface = pygame.image.load(texture)
         # using a mask texture lets artists use more of their alpha channels
         self.collides=ifcollides
+        self.mask = pygame.mask.from_surface(self.surface)
         #directions should probably be done opposite the way pygame does them,
         # just for the sake of our sanity
         # so x >0 = right ; y >0 = up
@@ -31,31 +40,41 @@ class Object:
         surface.blit(self.surface,at)
         self.position = at
     
-    def collides_with(self,otherobject):
-        if self.collides:
-            from pygame import mask
-            selfmask=mask.from_threshold(self.surface,(0,0,0,0),(1,1,1,1))#.invert()
-            othermask=mask.from_threshold(otherobject.surface,(0,0,0,0),(1,1,1,1))#.invert()
-            return selfmask.overlap(othermask,(1,1))
-        return False
+    def collide(self, otherobj):
+        if self.collides and otherobj.collides:
+            """
+            Test if the sprites are colliding and
+            resolve the collision in this case.
+            """
+            offset = [int(x) for x in vsub(otherobj.position,self.position)]
+            overlap = self.mask.overlap_area(otherobj.mask,offset)
+            if overlap == 0:
+                return
+            print "collision"
+            """Calculate collision normal"""
+            normx = (self.mask.overlap_area(otherobj.mask,(offset[0]+1,offset[1])) -
+                  self.mask.overlap_area(otherobj.mask,(offset[0]-1,offset[1])))
+            normy = (self.mask.overlap_area(otherobj.mask,(offset[0],offset[1]+1)) -
+                  self.mask.overlap_area(otherobj.mask,(offset[0],offset[1]-1)))
+            if normx == 0 and normy == 0:
+                """One sprite is inside another"""
+                return
+            normv = [normx,normy]
+            diffvel = vsub(otherobj.velocity,self.velocity)
+            energy = vdot(diffvel,normv)/(2*vdot(normv,normv))
+            if energy > 0:
+                """Can scale up to 2*J here to get bouncy collisions"""
+                energy *= 1.9
+                self.velocity=vadd(self.velocity,[normx*energy,normy*energy])
+            return
+            """Separate the sprites"""
+            c1 = -overlap/vdot(n,n)
+            c2 = -c1/2
+            self.position=vadd(self.position,[c2*normx,c2*normy])
 
-    def collides_dir(self,otherobject):
-        output=0
-        collision=self.collides_with(otherobject)
-        if collision:
-            center=pygame.mask.from_threshold(self.surface,(0,0,0,0),(1,1,1,1)).centroid()
-            output |= Collison.collides
-            if center[0]+0.25*self.surface.get_width() >=collision[0]:
-                output |= Collison.right
-            elif center[0]-0.25*self.surface.get_width() <=collision[0]:
-                output |= Collison.left
-            if center[1]+0.25*self.surface.get_height()<= collision[1]:
-                output |= Collison.bottom
-            elif center[1]+0.25*self.surface.get_height()<= collision[1]:
-                output |= Collison.top
-        return output
 
-
+#class Character(Object):
+    
 Glenda=Object('assets'+os.sep+'characters'+os.sep+'Glenda.png')
 Konqi=Object('assets'+os.sep+'characters'+os.sep+'Konqi.png')
 Beastie=Object('assets'+os.sep+'characters'+os.sep+'Beastie.png')

@@ -5,7 +5,6 @@ Implements the game logic, providing the Game class
 '''
 import pygame
 from globalvalues import Renderable,Options,GlobalObjects,Input,Collison
-from levelparser import LevelFile
 
 """
 Takes apart a level object and renders the necessary components for 
@@ -29,8 +28,6 @@ class Game(Renderable):
             for i in self.objectdict.iterkeys():
                 self.objectdict[i].draw_on(self.background,i)
         self.player = GlobalObjects.playercharacters[self.world]
-        self.player.draw_on(self.screen,level.playerstart)
-        
         self.is_jumping = False
     
     """
@@ -38,9 +35,21 @@ class Game(Renderable):
     black if the backgrounds option is false 
     """
     def tile_bkd(self):
-        levelbkgd = self.screen
-        levelbkgd.blit(self.background, (self.bkd_pos, 0))
-        
+        levelbkgd = pygame.Surface(self.size)
+        if Options.backgrounds:
+            print "tiling"
+            import math
+            print self.background.get_width()
+            htiles=int(math.ceil(float(self.size[0])/float(self.background.get_width())))
+            print htiles
+            vtiles=int(math.ceil(self.size[1]/self.background.get_height()))
+            for htile in range(htiles):
+                print htile
+                levelbkgd.blit(self.background,[htile*self.background.get_width(),0])
+                for vtile in range(vtiles):
+                    levelbkgd.blit(self.background,(0,vtile*self.background.get_height()))
+        self.background = levelbkgd
+
     """
     Processes and filters keyboard input.
     The filter assumes that the events will be processed in order, and 
@@ -80,25 +89,29 @@ class Game(Renderable):
     Draws the level, processing input and checking collisions
     """
     def draw(self, events):
+        self.screen.blit(self.background,[self.bkd_pos,0])
         input=self.process_events(events)
-        collisions =0
         for i in self.objectdict.iterkeys():
-            collisions |= self.player.collides_dir(self.objectdict[i])
-        if collisions & Collison.collides == Collison.collides:
-            if collisions & Collison.bottom == Collison.bottom:
-                #print "collide"
-                is_jumping = False
-                if self.player.velocity[1] < 0: self.player.velocity[1] = 0
-                if self.player.acceleration[1] < 0: self.player.velocity[1] = 0
-            if collisions & Collison.top == Collison.top:
-                if self.player.velocity[1] > 0: self.player.velocity[1] = 0
-                if self.player.acceleration[1] > 0: self.player.velocity[1] = 0
+            self.player.collide(self.objectdict[i])
+        #collisions =0
+        #for i in self.objectdict.iterkeys():
+            #collisions |= self.player.collides_dir(self.objectdict[i])
+        #if collisions & Collison.collides == Collison.collides:
+            #if collisions & Collison.bottom == Collison.bottom:
+                ##print "collide"
+                #is_jumping = False
+                #if self.player.velocity[1] < 0: self.player.velocity[1] = 0
+                #if self.player.acceleration[1] < 0: self.player.velocity[1] = 0
+            #if collisions & Collison.top == Collison.top:
+                #if self.player.velocity[1] > 0: self.player.velocity[1] = 0
+                #if self.player.acceleration[1] > 0: self.player.velocity[1] = 0
         #Gotta deal with the 2-keys pressed scenario somehow.
         
-        self.tile_bkd()
-        if self.player.position[0] < self.size[0]/2 or self.player.velocity[0] < 0:
-            self.player.draw_on(self.screen, (self.player.position[0] + (self.player.acceleration[0]*self.player.velocity[0]), 
-                                                self.player.position[1] + (self.player.acceleration[1]*self.player.velocity[1])))
+        if self.player.position[0] < self.screen.get_width()/2 or self.player.velocity[0] < 0:
+            self.player.draw_on(self.screen, (self.player.position[0] + 
+            (self.player.acceleration[0]*self.player.velocity[0]), 
+            self.player.position[1] + 
+            (self.player.acceleration[1]*self.player.velocity[1])))
         else:
             #scrolls background if player is moving past the midpoint on the screen
             self.player.draw_on(self.screen, (self.player.position[0], self.player.position[1] + (self.player.acceleration[1]*self.player.velocity[1])))

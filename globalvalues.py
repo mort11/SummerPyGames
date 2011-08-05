@@ -5,6 +5,7 @@ Acquiring the lock of a class is recommended before writing to its attributes
 '''
 import threading,pygame
 pygame.init()
+
 """
 Provides everything required by RenderThread, as well as initializing the display
 """
@@ -47,6 +48,7 @@ Objects that should be accessible from anywhere
 class GlobalObjects:
     playercharacters = None
     unlockedWorlds=1
+    currentWorld = 1 
     lock = threading.RLock()
     clock = pygame.time.Clock()
     renderingThread = None
@@ -82,3 +84,10 @@ class Collison:
     right=8
     left=16
 
+class Sound:
+    called = threading.Condition()
+    lock = threading.RLock()
+    backgroundmusic = 1
+    jump = 2
+    solved = 4
+    killed = 8

@@ -2,11 +2,11 @@
 menus.py
 Provides the Menu,MenuEntry, MainMenu and OptionsMenu classes
 '''
-import pygame,threading
+import pygame,threading,os
 pygame.init()
 from globalvalues import Options,Renderable,Menus,GlobalObjects
 menufont = pygame.font.SysFont("droidsans",20)
-
+background = pygame.image.load("assets"+os.sep+"algebridgemenublank.png")
 """
 Draws a dynamic menu
 """
@@ -91,7 +91,7 @@ class Menu(Renderable):
     """
     def draw(self,events):
         self.process_events(events)
-        self.screen.fill((0,0,0))
+        self.screen.blit(background,(0,0))
         screencenter=(self.screen.get_width()/2,self.screen.get_height()/2)
         setlength=len(self.entrylist)
         if setlength > 0:

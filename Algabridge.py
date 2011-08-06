@@ -24,6 +24,7 @@
 import pygame,threads,menus,levels
 from globalvalues import GlobalObjects,Events
 pygame.init()
+pygame.init()
 def main():
     render=threads.RenderThread()
     render.start()
@@ -48,8 +49,9 @@ def main():
             elif event.type == pygame.KEYDOWN:
                 if not GlobalObjects.escInUse and event.key == pygame.K_ESCAPE:
                     running = False
-        with Events.trigger,Events.done:
-            Events.trigger.wait()
+        with Events.trigger:
+            with Events.done:
+                Events.trigger.wait()
     cleanup()
     return 0
 

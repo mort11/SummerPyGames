@@ -5,7 +5,8 @@ the EventThread class, which sends events to the other threads
 '''
 import threading,pygame
 pygame.init()
-from globalvalues import GlobalObjects,Options,Events, Menus#, Sounds
+from globalvalues import GlobalObjects,Options,Events, Menus
+from sounds import Sounds
 frameratefont=pygame.font.SysFont("consolas",16)
 """
 Provides Events to threads that need them and limits the framerate
@@ -63,8 +64,9 @@ class RenderThread(threading.Thread):
             (255,0,0)),(0,0))
         pygame.display.flip()
         while not self.killed.isSet():
-            with Events.done, Events.trigger:
-                Events.trigger.wait()
+            with Events.done:
+                with Events.trigger:
+                    Events.trigger.wait()
             """
             Since None evaluates to False, use this check to make sure that the 
             renderobj exists
@@ -80,39 +82,40 @@ class RenderThread(threading.Thread):
 
 
 
-#class SoundThread(threading.Thread):
+class SoundThread(threading.Thread):
     
-    #def __init__(self):
-        #threading.Thread.__init__(self, name= "SoundThread")
-        #self.soundstoplay=0
-        #self.backgroundmusic=list()
-        #for i in range(3):
-            #self.backgroundmusic.append()
+    def __init__(self):
+        threading.Thread.__init__(self, name= "SoundThread")
+        self.soundstoplay=0
+        self.backgroundmusic=list()
+        for i in range(3):
+            self.backgroundmusic.append()
     
-    #def bkgrdsound_from_num(self, num):
-        #if num > 3: num = 3
-        #return pygame.mixer.Sound("assets"+os.sep+"music"+os.sep+"world"+str(num)+".ogg") 
+    def bkgrdsound_from_num(self, num):
+        if num > 3: num = 3
+        return pygame.mixer.Sound("assets"+os.sep+"music"+os.sep+"world"+str(num)+".ogg") 
     
-    #def bkgrndMusic(self, level = 0):
-		#if pygame.mixer.Channel(1).get_busy():
-			#pygame.mixer.channel(1).stop()
-		#if level == 1 and Sounds.levelOnePathExists:
-			#pygame.mixer.Channel(1).play(Sounds.levelOneSound, loops = -1)
-			#time.sleep(Sounds.levelOneSound.get_length()*3)
-		#elif level == 2 and Sounds.levelTwoPathExists:
-			#pygame.mixer.Channel(1).play(Sounds.levelTwoSound, loops = -1)
-			#time.sleep(Sounds.levelTwoSound.get_length()*3)
-        #elif level == 3 and Sounds.levelThreePathExists:
-			#pygame.mixer.Channel(1).play(Sounds.levelThreeSound, loops = -1)
-			#time.sleep(Sounds.levelThreeSound.get_length()*3)
-		#elif level == 4 and Sounds.bossPathExists:
-			#pygame.mixer.Channel(1).play(Sounds.bossSound, loops = -1)
-			#time.sleep(Sounds.bossSound.get_length()*3)
-		#else:
-			#print "Error: The soundfile doesn't exist or you have entered an invalid number"
-		#time.sleep(Sounds.levelOneSound.get_length()*3)
+    def bkgrndMusic(self, level = 0):
+        if pygame.mixer.Channel(1).get_busy():
+            pygame.mixer.channel(1).stop()
+        if level == 1 and Sounds.levelOnePathExists:
+            pygame.mixer.Channel(1).play(Sounds.levelOneSound, loops = -1)
+            time.sleep(Sounds.levelOneSound.get_length()*3)
+        elif level == 2 and Sounds.levelTwoPathExists:
+            pygame.mixer.Channel(1).play(Sounds.levelTwoSound, loops = -1)
+            time.sleep(Sounds.levelTwoSound.get_length()*3)
+        elif level == 3 and Sounds.levelThreePathExists:
+            pygame.mixer.Channel(1).play(Sounds.levelThreeSound, loops = -1)
+            time.sleep(Sounds.levelThreeSound.get_length()*3)
+        elif level == 4 and Sounds.bossPathExists:
+            pygame.mixer.Channel(1).play(Sounds.bossSound, loops = -1)
+            time.sleep(Sounds.bossSound.get_length()*3)
+        else:
+            print "Error: The soundfile doesn't exist or you have entered an invalid number"
+        time.sleep(Sounds.levelOneSound.get_length()*3)
     
-    #def run():
-        #running = True
-        #while running:
-            #with
+    def run():
+        running = True
+        bkdrndMusic(1)
+        while running:
+            running = True

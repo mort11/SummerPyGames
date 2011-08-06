@@ -50,7 +50,6 @@ class Object:
             overlap = self.mask.overlap_area(otherobj.mask,offset)
             if overlap == 0:
                 return
-            print "collision"
             """Calculate collision normal"""
             normx = (self.mask.overlap_area(otherobj.mask,(offset[0]+1,offset[1])) -
                   self.mask.overlap_area(otherobj.mask,(offset[0]-1,offset[1])))

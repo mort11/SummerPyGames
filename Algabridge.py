@@ -30,6 +30,8 @@ def main():
     render.start()
     eventthread=threads.EventThread()
     eventthread.start()
+    soundthread=threads.SoundThread()
+    soundthread.start()
     """
     Exits the game cleanly, ensuring that all threads exit
     """
@@ -38,6 +40,8 @@ def main():
         render.join()
         eventthread.killed.set()
         eventthread.join()
+        soundthread.killed.set()
+        soundthread.join()
     running = True
     while running:
         for event in Events.events:

@@ -3,7 +3,7 @@ threads.py
 Provides the RenderThread class, which is responsible for all rendering, and 
 the EventThread class, which sends events to the other threads
 '''
-import threading,pygame
+import threading,pygame,os
 pygame.init()
 from globalvalues import GlobalObjects,Options,Events, Menus
 from sounds import Sounds
@@ -88,8 +88,6 @@ class SoundThread(threading.Thread):
         threading.Thread.__init__(self, name= "SoundThread")
         self.soundstoplay=0
         self.backgroundmusic=list()
-        for i in range(3):
-            self.backgroundmusic.append()
     
     def bkgrdsound_from_num(self, num):
         if num > 3: num = 3
@@ -114,8 +112,8 @@ class SoundThread(threading.Thread):
             print "Error: The soundfile doesn't exist or you have entered an invalid number"
         time.sleep(Sounds.levelOneSound.get_length()*3)
     
-    def run():
+    def run(self):
         running = True
-        bkdrndMusic(1)
+        self.bkgrdsound_from_num(1).play()
         while running:
             running = True
